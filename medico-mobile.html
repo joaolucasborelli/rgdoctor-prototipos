@@ -1,0 +1,480 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RG Doctor — mobile</title>
+<style>:root{
+  --brand:#0049CD;--brand-press:#00379E;--brand-tint:rgba(0,73,205,.10);--brand-bd:rgba(0,73,205,.30);
+  --tint:rgba(0,73,205,.10);--terra1:#00379E;--terra2:#2F6FD8;
+  --ink:#1E2A32;--ink-2:#41505a;--muted:#6a7078;--faint:#9aa0a6;
+  --bg:#F6F9FB;--card:#ffffff;--card-2:#F4F8FB;--rail:#ffffff;--rail-2:#1E2A32;
+  --line:#E3EAF0;--line2:#EFF4F9;
+  --ok:#0E7C5A;--ok-bg:#E7F4EE;--warn:#B4670B;--warn-bg:#FBF0DC;
+  --danger:#C0392B;--danger-bg:#FBEBE9;--danger-bd:#F1C9C4;
+  --zap:#25D366;--paci:#DCF7E3;--paci-bd:#CBEDD3;
+  --r-card:12px;--r-btn:8px;--r-in:8px;--r-pill:999px;
+  --sh-1:0 1px 2px rgba(24,34,42,.05), 0 1px 1px rgba(24,34,42,.04);
+  --sh-2:0 10px 30px rgba(24,34,42,.12);
+  --t1:120ms;--t2:200ms;--ease:cubic-bezier(.2,.6,.2,1);
+  --font:'Inter',system-ui,sans-serif;--serif:'Newsreader',Georgia,serif;--mono:'IBM Plex Mono',monospace;
+}
+
+.avatar{width:42px;height:42px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:700;font-size:14px;color:#fff;letter-spacing:-.02em}
+
+.bubble{max-width:100%;padding:9px 13px;border-radius:14px;font-size:14px;line-height:1.45;box-shadow:var(--sh-1)}
+
+.bubble .who{font-size:11px;font-weight:700;margin-bottom:2px;font-family:var(--mono);letter-spacing:.03em;text-transform:uppercase}
+
+.bubble .time{font-size:10px;color:var(--faint);margin-top:3px;text-align:right}
+
+.b-paci{background:var(--paci);border:1px solid var(--paci-bd)}
+
+.b-conc{background:var(--card-2);border:1px solid var(--line)}
+
+.b-conc .who{color:var(--muted)}
+
+.b-medico{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--brand)}
+
+.b-medico .who{color:var(--brand)}
+
+.handoff{align-self:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r-pill);font-size:12.5px;color:var(--ink-2);padding:7px 15px;box-shadow:var(--sh-1);animation:rise var(--t2) var(--ease)}
+
+.handoff b{color:var(--brand)}
+
+.msgrow{display:flex;gap:8px;align-items:flex-end;max-width:82%;animation:rise var(--t2) var(--ease)}
+
+.msgrow.right{align-self:flex-end;flex-direction:row}
+
+.msgrow.left{align-self:flex-start}
+
+.msgrow.right{margin-left:auto}
+
+.tick{color:var(--zap);font-weight:700}
+
+.handoff.back{background:var(--ok-bg);border-color:#cde9dd;color:#0E5C44}
+
+.b-paci.tdots{display:flex;gap:4px;align-items:center;padding:14px 16px}
+
+.b-paci.tdots span{width:7px;height:7px;border-radius:50%;background:#8aa596;animation:tblink 1.2s infinite}
+
+.b-paci.tdots span:nth-child(2){animation-delay:.2s}
+
+.b-paci.tdots span:nth-child(3){animation-delay:.4s}
+
+.bubble:has(.exame):hover{box-shadow:var(--sh-1)}
+
+.sysnote{align-self:center;background:#eef3f7;color:var(--muted);font-size:11px;padding:5px 12px;border-radius:999px;margin:8px auto}
+
+*{box-sizing:border-box;margin:0;font-family:Inter,system-ui,-apple-system,sans-serif}
+html,body{height:100%}
+body{background:var(--bg,#F5F7FA);max-width:430px;margin:0 auto;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.mtop{background:#fff;border-bottom:1px solid var(--line,#E6ECF5);padding:54px 16px 12px;display:flex;gap:10px;align-items:center;flex:none}
+.mtop .lq{width:34px;height:34px;border-radius:9px;background:#0049CD;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.mtop h1{font-size:16px;color:#12212D}
+.mtop .sub{font-size:10.5px;color:#8896AC}
+.mbody{flex:1;overflow:auto;padding:14px}
+.mtabs{flex:none;background:#fff;border-top:1px solid var(--line,#E6ECF5);display:flex;padding:8px 4px 24px}
+.mtabs>div{flex:1;text-align:center;font-size:10px;color:#8896AC;font-weight:700;cursor:pointer}
+.mtabs>div.on{color:#0049CD}
+.mtabs svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;display:block;margin:0 auto 3px}
+.mscreen{display:none}.mscreen.on{display:block}
+.mcard{background:#fff;border:1px solid var(--line,#E6ECF5);border-radius:14px;padding:13px;margin-bottom:11px}
+.mcard .h{display:flex;align-items:center;gap:8px}
+.mpill{font-size:10px;font-weight:800;color:#fff;border-radius:999px;padding:3px 9px}
+.pu{background:#E87A2A}.pf{background:#12212D}.plk{background:#8896AC}
+.mcard .qdo{margin-left:auto;font-size:10.5px;font-weight:700;color:#E87A2A}
+.mcard b.nm{display:block;font-size:14px;color:#12212D;margin-top:7px}
+.mcard .fx{font-size:12px;color:#3C4A5C;margin-top:3px;line-height:1.45}
+.mcard .mut{font-size:11px;color:#8896AC;margin-top:4px}
+.stamp{background:#EAF7EF;color:#1F8A4A;font-size:10px;font-weight:700;border-radius:7px;padding:3px 8px;display:inline-block;margin-top:6px}
+.msec{font-size:10px;font-weight:800;letter-spacing:.08em;color:#8896AC;margin:12px 2px 8px;text-transform:uppercase}
+.mbtn{display:block;width:100%;border:2px solid #0049CD;border-radius:12px;padding:12px;text-align:center;font-weight:800;font-size:13.5px;color:#0049CD;background:#fff;margin-top:9px;cursor:pointer}
+.mbtn.pri{background:#0049CD;color:#fff}
+.mbtn.mut{border-color:var(--line,#E6ECF5);color:#8896AC;font-weight:700}
+.mbanner{background:#12212D;color:#fff;font-size:11px;font-weight:700;padding:8px 14px;flex:none;display:none}
+.mbanner span{color:#9FB4D8;font-weight:600}
+#thread{display:flex;flex-direction:column;gap:8px;padding-bottom:10px}
+.mslot{background:#fff;border:1px solid var(--line,#E6ECF5);border-left:4px solid #1F8A4A;border-radius:11px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:#3C4A5C}
+.mslot b{color:#12212D}.mslot .st{float:right;font-size:10px;font-weight:700;color:#1F8A4A}
+.mslot.warn{border-left-color:#E87A2A}.mslot.warn .st{color:#E87A2A}
+.mslot.edit{border-left-color:#0049CD;background:#F4F8FF}.mslot.edit .st{color:#0049CD}
+.mblock{border:2px dashed #C9D4E8;border-radius:12px;padding:12px;text-align:center;color:#0049CD;font-weight:800;font-size:12.5px;margin-top:10px}
+.mblock span{display:block;font-weight:600;font-size:10.5px;color:#8896AC;margin-top:3px}
+.bubble{max-width:78%}
+
+.mscreen#sc-conversa{flex-direction:column;height:100%}
+.mscreen#sc-conversa.on{display:flex}
+</style></head><body>
+<div class="mbanner">Você está falando como <b>Secretária Renata</b> <span>· equipe do Dr. Marcos Alves (CRM-SP 128.443)</span></div>
+<div class="mtop"><div class="lq">RG</div><div><h1>RG Doctor</h1><div class="sub">Dr. Marcos Alves · CRM-SP 128.443</div></div></div>
+<div class="mscreen on" id="sc-fila"><div class="mbody"><div class="msec">Precisam de você</div>
+<div class="mcard" onclick="show('caso')"><div class="h"><span class="mpill pu">precisa de você</span><span class="qdo">responder até 12h</span></div><b class="nm">João Ribeiro, 58</b><div class="fx">Enjoo desde o remédio novo — pior de manhã, dia 4.</div><div class="mut">O Concierge já perguntou início, horário e intensidade.</div></div>
+<div class="mcard" onclick="openConversa('maria')"><div class="h"><span class="mpill pu">precisa de você</span><span class="qdo">1º da fila</span></div><b class="nm">Pedro Gomes, 34</b><div class="fx">Foto da ferida operatória — sem sinais de alarme.</div><div class="stamp">chegou 03h14 · orientação de segurança dada · ninguém foi acordado</div></div>
+<div class="msec">Para quando puder</div>
+<div class="mcard" onclick="openConversa('anacosta')"><div class="h"><span class="mpill pf">fila</span></div><b class="nm">Ana Costa, 45</b><div class="fx">Ferritina 18 — dúvida dela anotada pra hoje cedo.</div></div>
+<div class="mcard"><div class="h"><span class="mpill pf">fila</span></div><b class="nm">Renovações de receita</b><div class="fx">Pré-montadas pelo Concierge — revisar no consultório.</div></div></div></div><div class="mscreen" id="sc-agenda"><div class="mbody"><div class="msec">Hoje · 9 consultas · 7 confirmadas · 1 recuperada ✦</div>
+<div class="mslot"><span class="st">confirmada</span><b>9h00 · Marta Nunes</b> — 1ª da manhã</div>
+<div class="mslot"><span class="st">confirmada ✦</span><b>10h00 · Antônio Pereira</b> — vem com a filha</div>
+<div class="mslot warn"><span class="st">sem resposta</span><b>10h40 · Otávio Ramos</b> — Renata liga 8h30</div>
+<div class="mslot"><span class="st">recuperada ✦</span><b>14h00 · Cida Ferreira</b> — retorno do joelho</div>
+<div class="mslot"><span class="st">confirmada</span><b>19h00 · Roberto Duarte</b> — primeira vez</div>
+<div class="mblock">✕ Bloquear período — emergência<span>o Concierge avisa todos e reacomoda · exceções viram ligação da Renata</span></div></div></div><div class="mscreen" id="sc-pacientes"><div class="mbody"><div class="msec">Carteira</div>
+<div class="mcard" onclick="openConversa('ana')"><b class="nm">João Ribeiro dos Santos</b><div class="mut">58 · losartana · retorno em 28 dias</div></div>
+<div class="mcard" onclick="openConversa('beatriz')"><b class="nm">Marta Nunes da Silva</b><div class="mut">62 · levotiroxina · retorno amanhã 9h</div></div>
+<div class="mcard" onclick="openConversa('rui')"><b class="nm">Rui Mendes</b><div class="mut">52 · reativado — exame quinta 7h30</div></div></div></div><div class="mscreen" id="sc-ajustes"><div class="mbody"><div class="msec">O que acorda seu celular</div>
+<div class="mslot"><span class="st">sempre</span><b>Risco à vida</b> — ignora o silêncio</div>
+<div class="mslot"><span class="st">com prazo</span><b>Precisa de você</b> — efeito colateral, exame alterado, foto</div>
+<div class="mslot warn"><span class="st">nunca</span><b>Fila</b> — badge, sem push</div>
+<div class="msec">Silêncio</div>
+<div class="mslot"><b>20h — 8h</b> · madrugada vira 1º da fila · risco à vida fura</div>
+<div class="msec">Equipe</div>
+<div class="mslot"><b>Dra. Helena Ramos</b> · backup clínico</div>
+<div class="mslot"><b>Renata</b> · recepção · nunca vê conteúdo clínico</div></div></div><div class="mscreen" id="sc-caso"><div class="mbody"><div style="background:#E87A2A;color:#fff;border-radius:12px;padding:11px 13px;display:flex;font-weight:800;font-size:13px">precisa de você<span style="margin-left:auto;font-weight:700;font-size:12px">responder até 12h</span></div>
+<b class="nm" style="font-size:18px;color:#12212D;display:block;margin-top:12px">João Ribeiro, 58</b>
+<div style="font-size:13.5px;color:#C4362B;font-weight:700;margin-top:3px">Enjoo desde o remédio novo — dia 4</div>
+<div style="font-size:12.5px;color:#3C4A5C;line-height:1.6;margin-top:9px"><b style="color:#12212D">O Concierge capturou:</b> início junto com o remédio · pior de manhã · orientado a não mexer em nada sem você.<br><b style="color:#12212D">Em uso:</b> Losartana 50 mg — 1x manhã · <b style="color:#12212D">PA em casa:</b> 152×94<br><b style="color:#12212D">Anexo:</b> fotos do aparelho de pressão</div>
+<div style="background:#FFF3E8;color:#B4590E;font-size:11px;border-radius:9px;padding:8px 11px;margin-top:10px">Sem resposta até 12h, escalona para a Dra. Helena (backup definido por você).</div>
+<div class="mbtn pri" onclick="openConversa('ana')">Responder agora</div>
+<div class="mbtn">Vou ver no consultório</div>
+<div class="mbtn mut">Delegar — Renata (administrativo) · Dra. Helena (clínico)</div>
+<div style="font-size:10px;color:#8896AC;text-align:center;margin-top:8px">Sua resposta vai pelo Concierge, registrada no prontuário. CFM 2.454/2026.</div></div></div><div class="mscreen" id="sc-conversa" style="flex-direction:column;height:100%%">
+      <div style="background:#fff;border-bottom:1px solid var(--line,#E6ECF5);padding:10px 14px;display:flex;gap:10px;align-items:center;flex:none">
+        <span onclick="show('fila')" style="font-size:20px;color:#0049CD;cursor:pointer">‹</span>
+        <div><b id="convNome" style="font-size:13.5px;color:#12212D"></b><div id="convSub" style="font-size:10.5px;color:#8896AC"></div></div>
+      </div>
+      <div class="mbody" id="thread"></div></div>
+<div class="mtabs"><div data-s="fila" class="on"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Fila</div><div data-s="agenda" class=""><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Agenda</div><div data-s="pacientes" class=""><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Pacientes</div><div data-s="ajustes" class=""><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"/></svg>Ajustes</div></div>
+<script>const PACS=[
+  {id:'ana',nome:'João Ribeiro',ini:'JR',cor:'#5C8AA6',idade:58,cpf:'123.456.789-09',plano:'Bradesco Saúde · 7781',
+   sla:'6 min',urg:false,fase:'tratamento',msg:'enjoo com o remédio novo — aguarda sua orientação',nasc:'14/03/1968',nomeCompleto:'João Ribeiro dos Santos',
+   alergias:['Nenhuma conhecida'],medic:['Losartana 50 mg — 1x pela manhã (dia 4)'],
+   condicoes:['Hipertensão arterial — em ajuste de tratamento','Picos pressóricos vespertinos há 3 semanas'],
+   resumo:'Encaminhado pela cardiologista. Anamnese de véspera feita pelo concierge (pressão subindo à tarde, esquecimentos da dose da manhã). Consulta em 30/07. Hoje relatou enjoo matinal no dia 4 do remédio novo — aguarda orientação.',
+   exames:[['PA (casa)','152x94',true,140,'07/26'],['Creatinina','1,1',false,1.3,'07/26'],['Colesterol total','198',false,240,'07/26']],
+   anexos:[{nome:'encaminhamento-cardio.jpg',meta:'JPG · 212 KB · enviado sáb às 21:47',kind:'exam'},{nome:'fotos-aparelho-pressao.jpg',meta:'JPG · 3 fotos · véspera às 19:20',kind:'exam'}],
+   links:[{t:'Link do retorno · Dr. Marcos',u:'meet.rgsaude.com.br/joao-marcos'}],
+   serie:{'PA sistólica':[['mai',146],['jun',149],['jul',152]],'Creatinina':[['jan',1.0],['jul',1.1]],'Colesterol total':[['jan',221],['jul',198]]},
+   pagamentos:{status:'pago',linha:'Consulta particular · R$ 380,00 · PIX · pago em 30/07'},
+   sinais:['Enjoo matinal relatado hoje (09:40) — subiu para sua fila','Pressão medida em casa: 152x94 (12/07)','Esquece a dose da manhã às vezes — registrado na anamnese'],
+   consultas:3, membro:'desde 12/04/2026',
+   tratamentos:[{nome:'Hipertensão — uso contínuo',oque:'Controle pressórico — ajuste em curso',med:'Losartana 50 mg · 1 comprimido pela manhã, em jejum',doc:'Receita emitida · 30/07',acomp:'Checagem pelo concierge · retorno em 28 dias',adesao:'Em dia — relatou enjoo no dia 4',status:'ativa',detalhe:'dia 4',avisos:['Enjoo matinal relatado hoje (09:40) — aguarda sua orientação','Dose da manhã: usa lembrete das 6h50']}],
+   planoDraft:{conduta:'Losartana 50 mg — 1 comprimido pela manhã, em jejum.',acomp:'Checar: adesão da dose da manhã, enjoo e PA medida em casa.',alerta:'Enjoo que piora, vômito persistente, PA acima de 180x110.',retorno:'28'},
+   _plano_removido:{ativo:true,desde:'30/07',adesao:82,
+     conduta:'Losartana 50 mg — 1 comprimido pela manhã, em jejum',
+     acomp:'Checar adesão da manhã, enjoo e PA em casa',
+     alerta:'Enjoo que piora, vômito persistente, PA acima de 180x110',
+     retornoDias:28,
+     status:{conduta:['seguindo','Tomou 4 de 4 dias'],acomp:['ativo','Último check hoje 09:40 — enjoo relatado'],alerta:['sem alertas','Nenhum gatilho disparado'],retorno:['agendado','Retorno em 28 dias']}},
+   timeline:[['sáb 21:47','Encaminhamento da cardiologista — foto recebida e lida'],['qua 19:02','Anamnese de véspera pelo concierge'],['30/07 14:00','Consulta com Dr. Marcos — ajuste da losartana'],['Hoje 09:40','Relatou enjoo matinal — dia 4 — subiu para sua fila']],
+   iaChips:['Resumo do caso do João','PA e adesão do João','Enjoo com losartana — o que diz a literatura?'],
+   thread:[
+     {t:'day',v:'Quarta · véspera da consulta · 19h02'},
+     {t:'conc',v:'Boa noite, Sr. João! Amanhã 14h o senhor tem consulta com o <b>Dr. Marcos</b>. Posso te fazer umas perguntinhas rápidas? Assim ele já te recebe sabendo de tudo e o tempo de vocês rende o dobro.',time:'19:02'},
+     {t:'paci',v:'pode',time:'19:10'},
+     {t:'conc',v:'O que mais tem te incomodado desde a última consulta?',time:'19:10'},
+     {t:'paci',v:'a pressão de tarde. de manhã tá boa, de tarde sobe',time:'19:11'},
+     {t:'conc',v:'Há quanto tempo o senhor percebeu isso?',time:'19:11'},
+     {t:'paci',v:'umas 3 semanas',time:'19:12'},
+     {t:'conc',v:'E a losartana — tem conseguido tomar todo dia, no mesmo horário?',time:'19:12'},
+     {t:'paci',v:'a da manhã às vezes esqueço, saio correndo pro serviço',time:'19:13'},
+     {t:'conc',v:'Entendi — e olha, isso é mais comum do que o senhor imagina, e é uma informação valiosa pro <b>Dr. Marcos</b>. Última: o senhor tem medido a pressão em casa? Se tiver os números, me manda que eu monto um graficozinho pra ele.',time:'19:14'},
+     {t:'paci',v:'tenho umas fotos do aparelho',time:'19:18'},
+     {t:'exame',en:'fotos-aparelho-pressao.jpg',es:'JPG · 3 fotos',time:'19:20'},
+     {t:'conc',v:'Perfeito, recebi! Prontinho, Sr. João — amanhã o <b>Dr. Marcos</b> já te recebe sabendo disso tudo. Até às 14h!',time:'19:21'},
+     {t:'day',v:'Hoje · 09h40'},
+     {t:'paci',v:'tô com um enjoo esquisito desde que comecei o remédio novo',time:'09:40'},
+     {t:'conc',v:'Sinto muito, Sr. João — enjoo é chato demais. Me ajuda a entender pra eu passar direitinho pro <b>Dr. Marcos</b>: começou junto com o remédio mesmo, uns 4 dias atrás?',time:'09:41'},
+     {t:'paci',v:'é, uns 3, 4 dias',time:'09:42'},
+     {t:'conc',v:'E é o dia todo ou pior em algum horário?',time:'09:42'},
+     {t:'paci',v:'pior de manhã, depois do comprimido',time:'09:43'},
+     {t:'conc',v:'Entendi. Olha, o que fazer com isso — manter, trocar horário, trocar remédio — é decisão do <b>Dr. Marcos</b>, então eu não vou palpitar. Mas já mandei tudo pra ele agora: o enjoo, os dias, o horário. Ele te responde ainda hoje de manhã.',time:'09:43'},
+     {t:'paci',v:'enquanto isso continuo tomando?',time:'09:44'},
+     {t:'conc',v:'Não mexe em nada sem ele falar, tá? Se piorar muito antes de ele responder, ou aparecer vômito que não para, me chama <b>NA HORA</b> que eu acelero. Combinado?',time:'09:44'},
+     {t:'paci',v:'combinado',time:'09:45'}
+   ]},
+  {id:'cida',nome:'Cida Ferreira',ini:'CF',cor:'#A88433',idade:71,cpf:'***.***.***-**',plano:'Particular',
+   sla:'—',urg:false,fase:'acompanhamento',msg:'pediu falar com pessoa — Renata liga até 10h30 (remarcar quinta)',nasc:'12/01/1955',nomeCompleto:'Aparecida Ferreira',
+   alergias:['Nenhuma conhecida'],medic:['Condroitina — uso contínuo'],
+   condicoes:['Gonartrose (joelho D) — em acompanhamento'],
+   resumo:'Retorno do joelho antecipado: assumiu a vaga recuperada de sexta 14h oferecida pelo concierge. Hoje pediu falar com humano — caiu na hora pra Renata, com o contexto (remarcar quinta) anexado.',
+   exames:[['Raio-x joelho','realizado',false,0,'07/26']],
+   anexos:[],links:[],
+   serie:{},
+   pagamentos:{status:'pago',linha:'—'},
+   sinais:['Pediu humano — escape imediato pra Renata, sem insistência','Assumiu vaga recuperada ✦ (sexta 14h)'],
+   consultas:4, membro:'desde 2026',
+   tratamentos:[],
+   planoDraft:{conduta:'',acomp:'',alerta:'',retorno:''},
+   _plano_removido:null,
+   timeline:[['Quarta 17:34','Assumiu a vaga recuperada ✦'],['Sexta 14:00','Retorno do joelho — raio-x na tela'],['Terça 10:05','Pediu humano — Renata acionada até 10h30']],
+   iaChips:['Resumo do caso','Histórico de conversas'],
+   thread:[
+     {t:'day',v:'Quarta · 17h34'},
+     {t:'conc',v:'Dona Cida, abriu um horário com o <b>Dr. Marcos</b> justo sexta às 14h. A senhora estava esperando o retorno do exame do joelho — quer aproveitar?',time:'17:34'},
+     {t:'paci',v:'quero!! tava esperando pro mês que vem',time:'17:36'},
+     {t:'conc',v:'Então é seu: sexta, 14h. O Dr. Marcos já vai estar com seu raio-x na tela.',time:'17:36'},
+     {t:'day',v:'Terça · 10h05'},
+     {t:'paci',v:'ah não, quero falar com uma pessoa, não gosto dessas coisas de robô',time:'10:05'},
+     {t:'conc',v:'Claro, dona Cida, sem problema nenhum! Já chamei a <b>Renata</b> — ela te liga em uns minutinhos, no máximo até as 10h30. Só deixei anotado pra ela que a senhora quer remarcar a consulta de quinta, assim ela já te liga sabendo. Foi isso mesmo?',time:'10:05'},
+     {t:'paci',v:'isso, quinta eu não posso mais',time:'10:07'},
+     {t:'conc',v:'Perfeito, ela já vai saber. Obrigado pela paciência, dona Cida!',time:'10:07'},
+     {t:'sys',v:'👤 <b>Renata</b> (recepção) entrou na conversa.'},
+     {t:'renata',v:'Oi dona Cida, aqui é a <b>Renata</b>! Já vi que quinta não dá mais — deixa comigo. Pode ser segunda às 14h ou quarta às 9h?',time:'10:12'},
+     {t:'paci',v:'quarta 9h tá ótimo',time:'10:14'},
+     {t:'renata',v:'Fechado, dona Cida: quarta, 9h. Já está marcado aqui, e na terça a gente te lembra. Precisa de mais alguma coisa?',time:'10:15'},
+     {t:'paci',v:'só isso mesmo, obrigada filha',time:'10:16'},
+     {t:'handback'}
+   ]},
+  {id:'otavio',nome:'Otávio Ramos',ini:'OR',cor:'#5B7B8A',idade:49,cpf:'***.***.***-**',plano:'Particular',
+   sla:'—',urg:false,fase:'novo',msg:'faltou às 10h — reagendado pra sábado 9h na mesma conversa',nasc:'30/10/1976',nomeCompleto:'Otávio Ramos',
+   alergias:['Nenhuma conhecida'],medic:['Nenhuma medicação registrada'],
+   condicoes:['Avaliação inicial — dor no ombro'],
+   resumo:'Faltou à consulta das 10h (problema na obra). Mensagem sem cobrança no fim do dia — reagendado pra sábado 9h na mesma conversa, com lembrete extra combinado pra sexta à noite.',
+   exames:[],
+   anexos:[],links:[],
+   serie:{},
+   pagamentos:{status:'pago',linha:'—'},
+   sinais:['Falta convertida em reagendamento no mesmo dia','Lembrete reforçado combinado com ele'],
+   consultas:1, membro:'desde 2026',
+   tratamentos:[],
+   planoDraft:{conduta:'',acomp:'',alerta:'',retorno:''},
+   _plano_removido:null,
+   timeline:[['Hoje 10:00','Falta — problema na obra'],['Hoje 18:20','Mensagem sem cobrança'],['Sábado 9:00','Reagendado ✦ · lembrete sexta à noite']],
+   iaChips:['Resumo do caso','Histórico de conversas'],
+   thread:[
+     {t:'day',v:'No dia da falta · 18h20'},
+     {t:'conc',v:'Oi Sr. Otávio, tudo bem? Senti sua falta hoje às 10h. Aconteceu alguma coisa?',time:'18:20'},
+     {t:'paci',v:'cara, me desculpa, deu um problema na obra e eu nem consegui avisar',time:'19:02'},
+     {t:'conc',v:'Imagino, obra não espera mesmo. Fica tranquilo que acontece. Quer que eu já deixe outro horário guardado? Tem quinta às 7h30, antes da obra, ou sábado às 9h.',time:'19:03'},
+     {t:'paci',v:'sábado 9h é melhor',time:'19:05'},
+     {t:'conc',v:'Sábado, 9h, fechado. E dessa vez eu te lembro na sexta à noite, combinado?',time:'19:05'},
+     {t:'paci',v:'kkkk combinado, valeu',time:'19:06'}
+   ]},
+  {id:'antonio',nome:'Antônio Pereira',ini:'AP',cor:'#6B8A4E',idade:78,cpf:'***.***.***-**',plano:'Particular',
+   sla:'—',urg:false,fase:'acompanhamento',msg:'filha Carla marcou quinta 10h — esquecimento e PA oscilando',nasc:'05/07/1948',nomeCompleto:'Antônio Pereira',
+   alergias:['Nenhuma conhecida'],medic:['Anlodipino 5 mg — 1x/dia'],
+   condicoes:['Hipertensão arterial','Queixa de esquecimento — a investigar'],
+   resumo:'Paciente desde março. A filha Carla (contato autorizado: agenda e lembretes — NÃO resultados) marcou consulta de quinta 10h relatando esquecimento e PA oscilando. Regra de sigilo dita na própria conversa.',
+   exames:[['PA (consultório)','148x90',true,140,'03/26']],
+   anexos:[],links:[],
+   serie:{},
+   pagamentos:{status:'pago',linha:'—'},
+   sinais:['Contato preferencial: filha Carla — autorização limitada a agenda','Limite de sigilo comunicado na conversa (CEM art. 73)'],
+   consultas:2, membro:'desde 2026',
+   tratamentos:[],
+   planoDraft:{conduta:'',acomp:'',alerta:'',retorno:''},
+   _plano_removido:null,
+   timeline:[['mar/26','Primeira consulta'],['Segunda 14:10','Carla marcou pelo pai'],['Quinta 10:00','Consulta — os dois juntos ✦']],
+   iaChips:['Resumo do caso','Histórico de conversas'],
+   thread:[
+     {t:'day',v:'Segunda · 14h10'},
+     {t:'paci',v:'oi, preciso marcar consulta pro meu pai, Antônio Pereira. ele tem 78 anos e eu que cuido dessas coisas',time:'14:10'},
+     {t:'conc',v:'Oi Carla! Claro. Achei a ficha do seu pai aqui — ele já veio com o <b>Dr. Marcos</b> em março. Como ele está?',time:'14:11'},
+     {t:'paci',v:'mais esquecido, e a pressão oscilando. queria que o doutor visse',time:'14:13'},
+     {t:'conc',v:'Entendi, e faz bem em trazer. Quinta às 10h é um bom horário — o Dr. Marcos gosta de mais tempo com pacientes de mais idade, e de manhã seu pai vem descansado. A senhora vem junto?',time:'14:14'},
+     {t:'paci',v:'venho sim, sempre venho',time:'14:15'},
+     {t:'conc',v:'Ótimo, ele vai atender os dois juntos então. Só uma coisa que eu preciso deixar claro, tá? Sobre agenda e lembrete eu falo com você à vontade. Resultado de exame e assunto de tratamento, o Dr. Marcos conversa com seu pai — e com você junto na consulta, se ele autorizar. É a regra que protege ele.',time:'14:16'},
+     {t:'paci',v:'claro, entendo perfeitamente',time:'14:17'},
+     {t:'conc',v:'Então quinta, 10h, os dois. Na quarta eu te lembro. Qualquer coisa antes, me chama!',time:'14:17'}
+   ]},
+  {id:'anacosta',nome:'Ana Costa',ini:'AC',cor:'#5C8AA6',idade:45,cpf:'***.***.***-**',plano:'Bradesco Saúde',
+   sla:'—',urg:false,fase:'investigacao',msg:'ferritina 18 às 23h de sexta — dúvida anotada pro Dr. responder segunda cedo',nasc:'17/04/1981',nomeCompleto:'Ana Costa',
+   alergias:['Nenhuma conhecida'],medic:['Nenhuma medicação ativa'],
+   condicoes:['Investigação de fadiga — ferritina limítrofe'],
+   resumo:'Viu ferritina 18 no laudo às 23h08 de sexta e se assustou. Concierge explicou a palavra e o valor impresso — o significado ficou pro Dr. Marcos, com a dúvida dela anotada literalmente pra segunda cedo.',
+   exames:[['Ferritina','18',true,20,'07/26'],['Hemoglobina','12,4',false,12,'07/26']],
+   anexos:[],links:[],
+   serie:{},
+   pagamentos:{status:'pago',linha:'—'},
+   sinais:['Ansiedade de resultado às 23h — acolhida na hora','Dúvida registrada palavra por palavra pro médico'],
+   consultas:1, membro:'desde 2026',
+   tratamentos:[],
+   planoDraft:{conduta:'',acomp:'',alerta:'',retorno:''},
+   _plano_removido:null,
+   timeline:[['Sexta 18:00','Resultado chegou ao consultório'],['Sexta 23:08','Ela viu ferritina baixa e chamou'],['Segunda cedo','Resposta do Dr. Marcos — compromisso dito']],
+   iaChips:['Resumo do caso','Histórico de conversas'],
+   thread:[
+     {t:'day',v:'Sexta · 23h08'},
+     {t:'paci',v:'o que é ferritina baixa?? tô preocupada, vi no meu resultado',time:'23:08'},
+     {t:'conc',v:'Oi Ana. Primeiro: respira, tá? Vou te explicar o que dá pra explicar.',time:'23:08'},
+     {t:'conc',v:'Ferritina é o estoque de ferro do corpo. No seu laudo ela veio 18, e a faixa de referência impressa ali do lado é 20 a 200 — então está um pouquinho abaixo da faixa, sim.',time:'23:09'},
+     {t:'conc',v:'Agora, o que isso significa PRA VOCÊ — se precisa repor, se explica o seu cansaço, se pede mais exame — só o <b>Dr. Marcos</b> pode dizer, porque ele conhece seu caso inteiro. Eu não faço essa leitura, e ninguém sério faria por mensagem.',time:'23:09'},
+     {t:'paci',v:'entendi... consigo falar com ele quando?',time:'23:10'},
+     {t:'conc',v:'Ele já está com seu resultado e te retorna na segunda de manhã. Mas escuta: 23h de sexta com preocupação na cabeça é ruim demais. Quer que eu deixe anotada sua dúvida exata, do jeito que você falou, pra ele responder logo cedo?',time:'23:10'},
+     {t:'paci',v:'quer sim, obrigada',time:'23:11'},
+     {t:'conc',v:'Anotado. E Ana — ferritina um pouco abaixo da faixa é um achado comum em mulheres, o Dr. Marcos vê isso toda semana. Tenta descansar. Segunda cedo você tem resposta.',time:'23:11'}
+   ]},
+  {id:'almeida',nome:'Almeida Prado',ini:'AL',cor:'#8A6650',idade:39,cpf:'***.***.***-**',plano:'Particular',
+   sla:'—',urg:false,fase:'novo',msg:'pediu atestado retroativo — RECUSADO com alternativa · 3ª vez em 60 dias',nasc:'23/11/1986',nomeCompleto:'José Almeida Prado',
+   alergias:['Nenhuma conhecida'],medic:['Nenhuma medicação registrada'],
+   condicoes:['Sem condição ativa registrada'],
+   resumo:'Pediu atestado retroativo na sexta 18h50. Recusado pelo concierge com educação, motivo (regra do CFM) e alternativa (encaixe 8h40). Registrado na lista Barrado — 3º pedido em 60 dias.',
+   exames:[],
+   anexos:[],links:[],
+   serie:{},
+   pagamentos:{status:'pago',linha:'—'},
+   sinais:['Pedido barrado — não chegou a interromper o médico','Padrão: 3 pedidos de atestado em 60 dias'],
+   consultas:1, membro:'desde 2026',
+   tratamentos:[],
+   planoDraft:{conduta:'',acomp:'',alerta:'',retorno:''},
+   _plano_removido:null,
+   timeline:[['há 60 dias','1º pedido de atestado — recusado'],['há 25 dias','2º pedido — recusado'],['Sexta 18:50','3º pedido — recusado com alternativa de consulta']],
+   iaChips:['Resumo do caso','Histórico de conversas'],
+   thread:[
+     {t:'day',v:'Sexta · 18h50'},
+     {t:'paci',v:'faltei ontem no serviço, me manda um atestado?',time:'18:50'},
+     {t:'conc',v:'Oi Sr. Almeida! Aqui eu preciso ser direto com o senhor, tá? Atestado só com avaliação — o <b>Dr. Marcos</b> não pode assinar sem te examinar, é regra do Conselho de Medicina, e ele leva isso a sério (o que, cá entre nós, é bom sinal num médico).',time:'18:51'},
+     {t:'paci',v:'mas é só um dia, todo mundo faz',time:'18:53'},
+     {t:'conc',v:'Eu entendo a situação, de verdade. Mas justamente porque o documento tem o CRM dele, não tem exceção. O que eu POSSO fazer: ele tem um encaixe amanhã às 8h40 — se o senhor não estava bem ontem e ainda não está, ele te avalia e emite o que for correto a partir da consulta. Quer?',time:'18:54'},
+     {t:'paci',v:'deixa então',time:'18:57'},
+     {t:'conc',v:'Tá bom. E se precisar de qualquer outra coisa — resultado, agendamento, dúvida — tô aqui, viu?',time:'18:57'}
+   ]},
+  {id:'juliana',nome:'Roberto Duarte',ini:'RD',cor:'#7A6BAA',idade:38,cpf:'***.***.***-**',plano:'A definir',
+   sla:'12 min',urg:false,fase:'novo',msg:'esposa (Camila) marcou pra terça 19h — cansaço e história familiar de HAS',nasc:'11/09/1987',nomeCompleto:'Roberto Duarte',
+   alergias:['Nenhuma conhecida'],medic:['Nenhuma medicação registrada'],
+   condicoes:['Investigação inicial — cansaço + história familiar de hipertensão'],
+   resumo:'Paciente novo. A esposa, Camila, marcou no domingo à noite pela conversa. Cansaço, irritabilidade, pai hipertenso. Consulta terça 19h — horário escolhido porque ele sai do trabalho às 18h. Exames antigos solicitados.',
+   exames:[],
+   anexos:[],links:[],
+   serie:{},
+   pagamentos:{status:'pago',linha:'Consulta particular · R$ 380,00'},
+   sinais:['Contato preferencial: esposa Camila (agenda e lembretes)','Consulta marcada fora do horário comercial — domingo 21h32'],
+   consultas:1, membro:'desde 2026',
+   tratamentos:[],
+   planoDraft:{conduta:'',acomp:'',alerta:'',retorno:''},
+   _plano_removido:null,
+   timeline:[['Domingo 21:32','Camila procurou — cansaço do marido'],['Domingo 21:39','Consulta marcada: terça 19h ✦'],['Terça de manhã','Confirmação combinada']],
+   iaChips:['Resumo do caso','Últimos exames','Histórico de conversas'],
+   thread:[
+     {t:'day',v:'Domingo · 21h32'},
+     {t:'paci',v:'oi, queria marcar uma consulta pro meu marido, ele não anda nada bem',time:'21:32'},
+     {t:'conc',v:'Oi Camila, boa noite! Claro. Me conta um pouquinho — o que você tem percebido nele?',time:'21:33'},
+     {t:'paci',v:'muito cansado, irritado, acho que é pressão, o pai dele tinha',time:'21:35'},
+     {t:'conc',v:'Entendi. E que bom que vocês não estão deixando passar — histórico na família é motivo certo pra olhar. O <b>Dr. Marcos</b> tem terça às 19h, depois do trabalho dele, ou quinta às 8h. Qual encaixa melhor?',time:'21:36'},
+     {t:'paci',v:'terça 19h é perfeito, ele sai 18h do serviço',time:'21:38'},
+     {t:'conc',v:'Fechado: terça, 19h. Uma coisa que ajuda muito o Dr. Marcos: se ele tiver qualquer exame antigo, mesmo de anos atrás, me manda foto que eu já deixo tudo organizado na ficha dele. E na terça de manhã eu confirmo com vocês, tá?',time:'21:39'},
+     {t:'paci',v:'vou procurar aqui, obrigada!',time:'21:40'},
+     {t:'conc',v:'Eu que agradeço a confiança. Qualquer coisa até lá, me chama.',time:'21:40'}
+   ]},
+  {id:'maria',nome:'Pedro Gomes',ini:'PG',cor:'#B0654A',idade:34,cpf:'***.***.***-**',plano:'Particular',
+   sla:'1º da fila',urg:true,fase:'acompanhamento',msg:'foto da ferida às 03h14 — orientação de segurança dada, 1º da fila',nasc:'02/05/1992',nomeCompleto:'Pedro Gomes Faria',
+   alergias:['Nenhuma conhecida'],medic:['Cefalexina 500 mg — pós-operatório'],
+   condicoes:['Pós-operatório de hérnia inguinal — dia 8'],
+   resumo:'Pós-operatório (dia 8). Mandou foto da ferida às 03h14 — varredura de sinais de alarme feita: sem febre, sem progressão, dor 5/10. Orientação de segurança dada. Carimbado: não acordou o médico.',
+   exames:[['Dor (0-10)','5',false,8,'hoje']],
+   anexos:[{nome:'foto-ferida.jpg',meta:'JPG · 1,1 MB · hoje às 03:14',kind:'exam'}],links:[],
+   serie:{},
+   pagamentos:{status:'pago',linha:'Consulta particular · R$ 380,00'},
+   sinais:['Foto da ferida às 03h14 — sem sinais de alarme','Orientação de PS dada com critérios claros','Primeiro da fila da manhã'],
+   consultas:1, membro:'desde 2026',
+   tratamentos:[],
+   planoDraft:{conduta:'',acomp:'',alerta:'',retorno:''},
+   _plano_removido:null,
+   timeline:[['semana passada','Cirurgia de hérnia inguinal'],['Hoje 03:14','Foto da ferida — triagem noturna do concierge'],['Hoje 03:20','Orientação de segurança + prioridade na fila']],
+   iaChips:['Resumo do caso','Últimos exames','Histórico de conversas'],
+   thread:[
+     {t:'day',v:'Hoje · 03h14'},
+     {t:'exame',en:'foto-ferida.jpg',es:'JPG · 1,1 MB',time:'03:14'},
+     {t:'paci',v:'operei semana passada, isso aí tá normal? me acordou a dor',time:'03:14'},
+     {t:'conc',v:'Recebi a foto, Sr. Pedro. Vou te fazer três perguntas rápidas e importantes, tá? Primeira: o senhor está com febre agora?',time:'03:15'},
+     {t:'paci',v:'acho que não, tô sem termômetro',time:'03:16'},
+     {t:'conc',v:'Se tiver como pegar um depois, ajuda. Segunda: a vermelhidão ao redor está se espalhando, ficando maior que ontem?',time:'03:16'},
+     {t:'paci',v:'igual ontem eu acho',time:'03:17'},
+     {t:'conc',v:'E a dor, de 0 a 10?',time:'03:17'},
+     {t:'paci',v:'umas 5, incomoda mas aguento',time:'03:18'},
+     {t:'conc',v:'Entendi. Então escuta com atenção: o que o senhor descreveu não tem os sinais que exigem pronto-socorro AGORA. Mas se aparecer febre, a vermelhidão espalhar, sair secreção com cheiro forte ou a dor passar de 8 — vai direto ao PS, sem me esperar. Anotou?',time:'03:19'},
+     {t:'paci',v:'anotei',time:'03:19'},
+     {t:'conc',v:'O <b>Dr. Marcos</b> vê sua foto às 8h em ponto — o senhor é o primeiro da fila dele, já deixei marcado. Tenta descansar com a orientação que te dei. E qualquer mudança até lá, me chama que eu tô aqui a noite toda.',time:'03:20'},
+     {t:'paci',v:'valeu de verdade',time:'03:21'},
+     {t:'conc',v:'Melhoras, Sr. Pedro.',time:'03:21'}
+   ]},
+  {id:'beatriz',nome:'Marta Nunes',ini:'MN',cor:'#4E8A6A',idade:62,cpf:'***.***.***-**',plano:'Particular (exames pela Unimed)',
+   sla:'12 min',urg:false,fase:'tratamento',msg:'avisada da emergência às 6h50 — remarcada pra amanhã 9h, primeira da manhã',nasc:'03/02/1964',nomeCompleto:'Marta Nunes da Silva',
+   alergias:['Nenhuma conhecida'],medic:['Levotiroxina 75 mcg — 1x em jejum'],
+   condicoes:['Hipotireoidismo — dose em ajuste'],
+   resumo:'Veio da Unimed pelo atendimento particular explicado na conversa. Em ajuste de levotiroxina. Retorno de controle marcado pelo concierge citando o motivo. Hoje foi avisada às 6h50 da emergência do Dr. Marcos — remarcada antes de sair de casa.',
+   exames:[['TSH','4,8',true,4.5,'06/26']],
+   anexos:[],links:[],
+   serie:{},
+   pagamentos:{status:'pago',linha:'Consulta particular · R$ 380,00'},
+   sinais:['Menos inchada — relato registrado no retorno','TSH de controle solicitado','Remarcada por emergência — sem espera amanhã'],
+   consultas:2, membro:'desde 2026',
+   tratamentos:[],
+   planoDraft:{conduta:'',acomp:'',alerta:'',retorno:''},
+   _plano_removido:null,
+   timeline:[['Terça 12:20','Perguntou do convênio — particular explicado'],['Quinta 9:00','Primeira consulta'],['28 dias','Retorno de controle marcado'],['Hoje 6:50','Avisada da emergência — remarcada pra amanhã 9h']],
+   iaChips:['Resumo do caso','Últimos exames','Histórico de conversas'],
+   thread:[
+     {t:'day',v:'Terça · 12h20'},
+     {t:'paci',v:'o doutor atende Unimed?',time:'12:20'},
+     {t:'conc',v:'Oi, dona Marta! O <b>Dr. Marcos</b> não atende Unimed, vou ser sincero com a senhora. Mas deixa eu te explicar como funciona o particular, porque muita gente da Unimed acaba vindo assim: a consulta é R$ 380, dura 40 minutos — o dobro do tempo de convênio — e o acompanhamento depois, comigo aqui no WhatsApp, já está incluído. Dúvida de remédio, resultado de exame, remarcar retorno: é só chamar.',time:'12:21'},
+     {t:'paci',v:'nossa, 40 minutos? na unimed é 10',time:'12:24'},
+     {t:'conc',v:'Pois é. E se a senhora quiser, os exames continuam pela Unimed normalmente — só a consulta que é particular. Quer que eu veja um horário sem compromisso?',time:'12:24'},
+     {t:'paci',v:'pode ver quinta de manhã',time:'12:26'},
+     {t:'conc',v:'Quinta às 9h ou às 10h40. Qual fica melhor?',time:'12:26'},
+     {t:'day',v:'28 dias depois da consulta · 9h15'},
+     {t:'conc',v:'Oi dona Marta! O <b>Dr. Marcos</b> pediu pra te ver de novo agora no comecinho de agosto — ele queria conferir como a tireoide respondeu à dose nova. Como a senhora tem passado?',time:'09:15'},
+     {t:'paci',v:'até que bem, menos inchada',time:'09:40'},
+     {t:'conc',v:'Que ótimo sinal! E é exatamente isso que ele quer ver de perto pra decidir se mantém a dose. Tenho terça às 10h ou quinta às 16h.',time:'09:41'},
+     {t:'paci',v:'terça',time:'09:44'},
+     {t:'conc',v:'Terça, 10h. E se a senhora fez aquele TSH de controle, me manda foto que eu deixo na ficha. Se não fez, sem problema — dá tempo de fazer segunda cedo, quer que eu veja?',time:'09:45'},
+     {t:'day',v:'Hoje · 6h50'},
+     {t:'conc',v:'Bom dia, dona Marta! Preciso te avisar antes da senhora sair de casa: o <b>Dr. Marcos</b> teve uma emergência no hospital e a consulta das 9h não vai poder acontecer. Me desculpa mesmo pelo transtorno.',time:'06:50'},
+     {t:'paci',v:'ai que bom que avisou, eu ia pegar ônibus 7h30',time:'06:58'},
+     {t:'conc',v:'Por isso corri pra te falar agora. Já guardei dois horários pra senhora escolher: amanhã às 9h, igualzinho, ou quinta às 15h.',time:'06:59'},
+     {t:'paci',v:'amanhã 9h',time:'07:02'},
+     {t:'conc',v:'Feito — amanhã, 9h. E pelo transtorno, a senhora entra como primeira da manhã: sem espera. Até amanhã!',time:'07:03'}
+   ]},
+  {id:'rui',nome:'Rui Mendes',ini:'RM',cor:'#8A5A7A',idade:52,cpf:'***.***.***-**',plano:'SulAmérica',
+   sla:'12 min',urg:false,fase:'acompanhamento',msg:'reativado após 11 meses — colesterol era 212 · exame quinta 7h30 ✦',nasc:'21/06/1974',nomeCompleto:'Rui Mendes',
+   alergias:['Nenhuma conhecida'],medic:['Nenhuma medicação ativa'],
+   condicoes:['Dislipidemia a reavaliar (212 há 1 ano)','Lombalgia — resolvida'],
+   resumo:'Sumido há 11 meses. Reativado pelo concierge citando o dado dele: a dor lombar da época (melhorou) e o colesterol 212 (nunca mais mediu). Lipidograma quinta 7h30 + consulta na semana seguinte, marcados na mesma conversa.',
+   exames:[['Colesterol total','212',true,190,'08/25']],
+   anexos:[],links:[],
+   serie:{'Colesterol total':[['ago/24',198],['ago/25',212]]},
+   pagamentos:{status:'pago',linha:'Consulta particular · R$ 380,00'},
+   sinais:['Silêncio de 11 meses — fora do padrão dele','Reativação com o dado próprio — respondeu em 22 min','Exame + consulta fechados na mesma conversa'],
+   consultas:1, membro:'desde 2026',
+   tratamentos:[],
+   planoDraft:{conduta:'',acomp:'',alerta:'',retorno:''},
+   _plano_removido:null,
+   timeline:[['ago/25','Última consulta — lombalgia · colesterol 212'],['Hoje 9:30','Reativação pelo concierge'],['Quinta 7:30','Lipidograma em jejum ✦'],['Semana seguinte','Consulta de reavaliação ✦']],
+   iaChips:['Resumo do caso','Últimos exames','Histórico de conversas'],
+   thread:[
+     {t:'day',v:'Hoje · 9h30 — 11 meses sem contato'},
+     {t:'conc',v:'Oi Sr. Rui, faz quase um ano que a gente não se fala! Tudo bem com o senhor? Na época o senhor tinha vindo por causa daquela dor nas costas, e o colesterol tinha dado 212. Como estão as duas coisas?',time:'09:30'},
+     {t:'paci',v:'a dor melhorou. o colesterol nunca mais medi pra falar a verdade',time:'09:52'},
+     {t:'conc',v:'Da dor eu fico feliz! Do colesterol, olha, um ano é exatamente o prazo que o <b>Dr. Marcos</b> gosta de reconferir — ainda mais que da última vez já estava um pouquinho acima. Quer aproveitar e resolver? Consigo o exame quinta de manhã e a consulta na semana seguinte, tudo de uma vez.',time:'09:53'},
+     {t:'paci',v:'pode ser, aí já vejo tudo',time:'09:58'},
+     {t:'conc',v:'Perfeito. Quinta, 7h30, jejum de 12 horas — te lembro na quarta à noite. E o Dr. Marcos vai gostar de saber que a dor sarou.',time:'09:59'}
+   ]}
+];
+const HANDOFF='🩺 <b>Dr. Marcos Alves</b> entrou na conversa.';
+
+function esc(x){return x}
+function bub(m){
+ var pav='',cav='',mavv='';
+ if(m.t==='day')return '<div class="day" style="align-self:center">'+m.v+'</div>';
+ if(m.t==='sys')return '<div class="sysnote">'+m.v+'</div>';
+ if(m.t==='handoff')return '<div class="handoff">'+HANDOFF+'</div>';
+ if(m.t==='handback')return '<div class="handoff back">🤝 O <b>Concierge</b> reassumiu o acompanhamento.</div>';
+ if(m.t==='paci')return '<div class="msgrow right"><div class="bubble b-paci">'+m.v+'<div class="time">'+(m.time||'')+' <span class="tick">✓✓</span></div></div></div>';
+ if(m.t==='conc')return '<div class="msgrow left"><div class="bubble b-conc"><div class="who">Concierge</div>'+m.v+'<div class="time">'+(m.time||'')+'</div></div></div>';
+ if(m.t==='medico')return '<div class="msgrow left"><div class="bubble b-medico"><div class="who">Dr. Marcos</div>'+m.v+'<div class="time">'+(m.time||'')+' <span class="tick">✓✓</span></div></div></div>';
+ if(m.t==='renata')return '<div class="msgrow left"><div class="bubble b-medico"><div class="who">Renata · recepção</div>'+m.v+'<div class="time">'+(m.time||'')+' <span class="tick">✓✓</span></div></div></div>';
+ if(m.t==='exame')return '<div class="msgrow right"><div class="bubble b-paci" style="padding:8px"><div style="font-size:11px;font-weight:700">📎 '+m.en+'</div><div style="font-size:10px;color:#8896AC">'+m.es+'</div><div class="time">'+(m.time||'')+'</div></div></div>';
+ return '';
+}
+function openConversa(id){
+ var p=PACS.find(function(x){return x.id===id});if(!p)return;
+ document.getElementById('convNome').textContent=p.nome+' · '+p.idade;
+ document.getElementById('convSub').textContent=p.msg;
+ document.getElementById('thread').innerHTML=p.thread.map(bub).join('');
+ show('conversa');
+ var t=document.getElementById('thread');t.scrollTop=t.scrollHeight;
+}
+function show(id){
+ document.querySelectorAll('.mscreen').forEach(function(s){s.classList.remove('on')});
+ document.getElementById('sc-'+id).classList.add('on');
+ document.querySelectorAll('.mtabs>div').forEach(function(t){t.classList.toggle('on',t.dataset.s===id)});
+}
+document.querySelectorAll('.mtabs>div').forEach(function(t){t.onclick=function(){show(t.dataset.s)}});
+</script>
+</body></html>
