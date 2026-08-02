@@ -4773,5 +4773,6 @@ if(dbRailBtn) dbRailBtn.addEventListener('click', function(){ setTimeout(dbActiv
 
 
 <script>(function(){var ru=document.querySelector('.ru-info')||document.querySelector('.rail-user');if(ru){ru.addEventListener('click',function(){var p=document.querySelector('.rail-item[data-tab="perfil"]');if(p){p.click();}else{var evs=document.querySelectorAll('.rail-item');/*fallback: última aba*/}});}})();</script>
+<script>/*hashRouter*/document.addEventListener('DOMContentLoaded',function(){var h=location.hash.replace('#','');if(h){var b=document.querySelector('.rail-item[data-tab="'+h+'"]');if(b)b.click();}});</script>
 </body>
 </html>
