@@ -4775,5 +4775,24 @@ if(dbRailBtn) dbRailBtn.addEventListener('click', function(){ setTimeout(dbActiv
 <script>(function(){var ru=document.querySelector('.ru-info')||document.querySelector('.rail-user');if(ru){ru.addEventListener('click',function(){var p=document.querySelector('.rail-item[data-tab="perfil"]');if(p){p.click();}else{var evs=document.querySelectorAll('.rail-item');/*fallback: última aba*/}});}})();</script>
 <style>body.bare .rail{display:none!important}body.bare #perfilSwitch{display:none!important}body.bare #evFab{display:none!important}body.bare .ev-fab{display:none!important}</style>
 <script>/*hashRouter*/document.addEventListener('DOMContentLoaded',function(){var h=location.hash.replace('#','');var bare=h.indexOf('-bare')>-1;h=h.replace('-bare','');if(bare)document.body.classList.add('bare');if(h){var b=document.querySelector('.rail-item[data-tab="'+h+'"]');if(b){b.click();}else if(h==='perfil'){var r=document.querySelector('.ru-info')||document.querySelector('.rail-user');if(r)r.click();}}});</script>
+
+<style>#evFab{display:none!important}</style>
+<script>
+/* Evidence: painel lateral morre — tudo abre em TELA CHEIA (a aba), com o contexto/mensagem pronta preservados */
+document.addEventListener('DOMContentLoaded',function(){
+  if(typeof evOpen!=='function')return;
+  var _open=evOpen;
+  window.evOpen=function(){
+    _open();
+    var p=document.getElementById('evPanel');
+    if(p){p.classList.add('full');document.body.classList.add('ev-full');}
+    document.querySelectorAll('.rail-item').forEach(function(x){x.classList.remove('active');});
+    var b=document.querySelector('.rail-item[data-tab="evidence"]');
+    if(b)b.classList.add('active');
+  };
+  var f=document.getElementById('evFab'); if(f)f.style.display='none';
+});
+</script>
+
 </body>
 </html>
