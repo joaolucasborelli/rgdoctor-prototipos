@@ -4774,6 +4774,6 @@ if(dbRailBtn) dbRailBtn.addEventListener('click', function(){ setTimeout(dbActiv
 
 <script>(function(){var ru=document.querySelector('.ru-info')||document.querySelector('.rail-user');if(ru){ru.addEventListener('click',function(){var p=document.querySelector('.rail-item[data-tab="perfil"]');if(p){p.click();}else{var evs=document.querySelectorAll('.rail-item');/*fallback: última aba*/}});}})();</script>
 <style>body.bare .rail{display:none!important}body.bare #perfilSwitch{display:none!important}body.bare #evFab{display:none!important}body.bare .ev-fab{display:none!important}</style>
-<script>/*hashRouter*/document.addEventListener('DOMContentLoaded',function(){var h=location.hash.replace('#','');var bare=h.indexOf('-bare')>-1;h=h.replace('-bare','');if(bare)document.body.classList.add('bare');if(h){var b=document.querySelector('.rail-item[data-tab="'+h+'"]');if(b)b.click();}});</script>
+<script>/*hashRouter*/document.addEventListener('DOMContentLoaded',function(){var h=location.hash.replace('#','');var bare=h.indexOf('-bare')>-1;h=h.replace('-bare','');if(bare)document.body.classList.add('bare');if(h){var b=document.querySelector('.rail-item[data-tab="'+h+'"]');if(b){b.click();}else if(h==='perfil'){var r=document.querySelector('.ru-info')||document.querySelector('.rail-user');if(r)r.click();}}});</script>
 </body>
 </html>
