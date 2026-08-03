@@ -1223,7 +1223,7 @@ body.ev-push:not(.ev-full) .view{min-width:0;overflow:hidden}
 #view-perfil{overflow:auto}
 #view-perfil>*{max-width:900px;margin-left:auto!important;margin-right:auto!important}
 #view-perfil>div,#view-perfil>section{width:100%}
-</style></head>
+</style><style>body.bare .eqRow,body.bare #eqBox{display:none!important}</style></head>
 <body>
 <div class="app">
   <nav class="rail" id="rail">
@@ -4866,5 +4866,47 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 
+<style>
+.eqRow{display:flex;gap:10px;align-items:center;padding:11px 14px;background:#F0F6FF;border-bottom:2px solid #D6E4FA;cursor:pointer}
+.eqRow .av{width:38px;height:38px;border-radius:50%;background:#12212D;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.eqRow b{font-size:13px;color:#12212D;display:block}.eqRow span{font-size:11px;color:#5A6A80}
+.eqRow .tag{margin-left:auto;font-size:9.5px;font-weight:800;background:#0049CD;color:#fff;border-radius:999px;padding:3px 8px}
+#eqBox{display:none;position:fixed;right:22px;bottom:22px;width:400px;max-height:74vh;background:#fff;border:1px solid #C9D4E8;border-radius:16px;box-shadow:0 16px 48px rgba(20,40,80,.22);z-index:960;flex-direction:column;font-family:Inter,system-ui;overflow:hidden}
+#eqBox.on{display:flex}
+#eqBox .h{background:#12212D;color:#fff;padding:12px 15px;font-size:12.5px;font-weight:800}
+#eqBox .h span{display:block;font-weight:600;font-size:10px;color:#9FB4D8}
+#eqBox .h .x{float:right;cursor:pointer;font-size:16px}
+#eqTh{flex:1;overflow:auto;padding:13px;display:flex;flex-direction:column;gap:8px;background:#F5F7FA}
+.eqB{max-width:82%;border-radius:12px;padding:8px 11px;font-size:12.5px;line-height:1.45;color:#12212D}
+.eqMe{align-self:flex-end;background:#DCE9FF}.eqEle{align-self:flex-start;background:#fff;border:1px solid #E6ECF5}
+.eqB .w{font-size:9.5px;font-weight:800;color:#0049CD;margin-bottom:2px}
+.eqB .t{font-size:9.5px;color:#8896AC;text-align:right;margin-top:3px}
+.eqTask{align-self:stretch;background:#fff;border:1px solid #C6D8FA;border-left:4px solid #0049CD;border-radius:12px;padding:10px 12px;font-size:12px}
+.eqTask b{color:#12212D}.eqTask .pc{font-size:10px;font-weight:800;background:#E8F0FF;color:#0049CD;border-radius:999px;padding:2px 8px;margin-right:6px}
+.eqTask .st{float:right;font-size:10px;font-weight:800;color:#1F8A4A}
+#eqBox .cmp{display:flex;gap:8px;padding:10px;border-top:1px solid #E6ECF5;background:#fff}
+#eqBox input{flex:1;border:1px solid #C9D4E8;border-radius:10px;padding:9px 12px;font-size:12.5px}
+#eqBox button{border:0;background:#0049CD;color:#fff;border-radius:10px;padding:0 15px;font-weight:800;cursor:pointer}
+</style><div id="eqBox"><div class="h"><span class="x" onclick="document.getElementById('eqBox').classList.remove('on')">✕</span>Renata · recepção<span>sua equipe · canal interno — substitui o WhatsApp pessoal · tudo registrado</span></div>
+<div id="eqTh">
+<div class="eqB eqEle"><div class="w">RENATA · RECEPÇÃO</div>Bom dia! O primeiro horário confirmou, pode mandar entrar quando chegar.<div class="t">7h58</div></div>
+<div class="eqTask"><span class="pc">João Ribeiro</span><b>Cobrar consulta + agendar retorno em 28 dias</b><span class="st">virou tarefa ✓</span><div style="font-size:10.5px;color:#8896AC;margin-top:4px">Delegação com paciente anexado — registrada com autor e hora (8h02)</div></div>
+<div class="eqB eqMe">a dona Cida chegou 20 min adiantada, aviso quando você liberar<div class="t">8h05 ✓✓</div></div>
+<div class="eqB eqEle"><div class="w">RENATA · RECEPÇÃO</div>Pode deixar na salinha, termino em 10.<div class="t">8h06</div></div>
+</div>
+<div class="cmp"><input id="eqIn" placeholder="Mensagem interna…" onkeydown="if(event.key==='Enter')eqSend()"><button onclick="eqSend()">➤</button></div></div>
+<script>
+function eqSend(){var i=document.getElementById('eqIn');var v=(i.value||'').trim();if(!v)return;
+var th=document.getElementById('eqTh');var h=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+th.innerHTML+='<div class="eqB eqMe">'+v+'<div class="t">'+h+' ✓✓</div></div>';i.value='';th.scrollTop=th.scrollHeight;}
+document.addEventListener('DOMContentLoaded',function(){
+ function inj(){var f=document.getElementById('fila');if(!f||document.getElementById('eqRow'))return;
+  var r=document.createElement('div');r.id='eqRow';r.className='eqRow';
+  r.innerHTML='<div class="av">R</div><div><b>Renata · recepção</b><span>canal interno · delegações e recados</span></div><span class="tag">EQUIPE</span>';
+  r.onclick=function(){document.getElementById('eqBox').classList.add('on')};
+  f.parentNode.insertBefore(r,f);}
+ inj();setInterval(inj,1500);
+});
+</script>
 </body>
 </html>
