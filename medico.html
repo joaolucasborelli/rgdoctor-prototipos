@@ -4873,8 +4873,8 @@ document.addEventListener('DOMContentLoaded',function(){
 .eqRow .tag{margin-left:auto;font-size:9.5px;font-weight:800;background:#0049CD;color:#fff;border-radius:999px;padding:3px 8px}
 #eqBox{display:none;position:fixed;left:412px;right:0;top:0;bottom:0;background:#fff;border:0;border-radius:0;z-index:960;flex-direction:column;font-family:Inter,system-ui;overflow:hidden}
 #eqBox.on{display:flex}
-#eqBox .h{background:#12212D;color:#fff;padding:12px 15px;font-size:12.5px;font-weight:800}
-#eqBox .h span{display:block;font-weight:600;font-size:10px;color:#9FB4D8}
+#eqBox .h{background:#fff;border-bottom:1px solid #E6ECF5;color:#12212D;padding:12px 16px;font-size:14px;font-weight:800;display:flex;align-items:center;gap:10px}
+#eqBox .h span{display:block;font-weight:600;font-size:10.5px;color:#8896AC}
 #eqBox .h .x{float:right;cursor:pointer;font-size:16px}
 #eqTh{flex:1;overflow:auto;padding:13px;display:flex;flex-direction:column;gap:8px;background:#F5F7FA}
 .eqB{max-width:82%;border-radius:12px;padding:8px 11px;font-size:12.5px;line-height:1.45;color:#12212D}
@@ -4887,13 +4887,8 @@ document.addEventListener('DOMContentLoaded',function(){
 #eqBox .cmp{display:flex;gap:8px;padding:10px;border-top:1px solid #E6ECF5;background:#fff}
 #eqBox input{flex:1;border:1px solid #C9D4E8;border-radius:10px;padding:9px 12px;font-size:12.5px}
 #eqBox button{border:0;background:#0049CD;color:#fff;border-radius:10px;padding:0 15px;font-weight:800;cursor:pointer}
-</style><div id="eqBox"><div class="h"><span class="x" onclick="document.getElementById('eqBox').classList.remove('on')">✕</span>Renata · recepção<span>sua equipe · canal interno — substitui o WhatsApp pessoal · tudo registrado</span></div>
-<div id="eqTh">
-<div class="eqB eqEle"><div class="w">RENATA · RECEPÇÃO</div>Bom dia, Dr.! O primeiro horário confirmou. E a dona Cida chegou 20 min adiantada — aviso quando o senhor liberar.<div class="t">7h58</div></div>
-<div class="eqB eqMe">Pode deixar na salinha, termino em 10.<div class="t">8h01 ✓✓</div></div>
-<div class="eqTask"><span class="pc">João Ribeiro</span><b>Cobrar consulta + agendar retorno em 28 dias</b><span class="st">virou tarefa ✓</span><div style="font-size:10.5px;color:#8896AC;margin-top:4px">Você delegou com o paciente anexado — registrada com autor e hora (8h02)</div></div>
-<div class="eqB eqEle"><div class="w">RENATA · RECEPÇÃO</div>Anotado, Dr. — já está na minha lista.<div class="t">8h03</div></div>
-</div>
+</style><div id="eqBox"><div class="h"><span class="x" onclick="document.getElementById('eqBox').classList.remove('on')" style="order:9;margin-left:auto;cursor:pointer;color:#8896AC">✕</span><div style="width:40px;height:40px;border-radius:50%;background:#12212D;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center">R</div><div>Renata · recepção<span>canal interno da equipe · tudo registrado</span></div></div>
+<div id="eqTh"><div class="msgrow left"><div class="bubble b-medico"><div class="who">Renata · recepção</div>Bom dia, Dr.! O primeiro horário confirmou. E a dona Cida chegou 20 min adiantada — aviso quando o senhor liberar.<div class="time">7h58</div></div></div><div class="msgrow right"><div class="bubble b-paci">Pode deixar na salinha, termino em 10.<div class="time">8h01 <span class="tick">✓✓</span></div></div></div><div class="eqTask"><span class="pc">João Ribeiro</span><b>Cobrar consulta + agendar retorno em 28 dias</b><span class="st">virou tarefa ✓</span><div style="font-size:10.5px;color:#8896AC;margin-top:4px">Delegação com paciente anexado — registrada com autor e hora (8h02)</div></div><div class="msgrow left"><div class="bubble b-medico"><div class="who">Renata · recepção</div>Anotado, Dr. — já está na minha lista.<div class="time">8h03</div></div></div></div>
 <div class="cmp"><input id="eqIn" placeholder="Mensagem interna…" onkeydown="if(event.key==='Enter')eqSend()"><button onclick="eqSend()">➤</button></div></div>
 <script>
 function eqSend(){var i=document.getElementById('eqIn');var v=(i.value||'').trim();if(!v)return;
