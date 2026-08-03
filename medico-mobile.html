@@ -99,7 +99,7 @@ body{background:#F5F7FA;overflow:hidden}
   <div class="comp">
     <div class="locked" id="locked">✏️ Mensagem<span style="margin-left:auto">🎤</span>
       <span class="enterbtn" onclick="entrar()">Clique para entrar na conversa</span></div>
-    <div class="liverow" id="liverow"><input placeholder="Escreva como Dr. Marcos..."><button class="devol" onclick="devolver()">Devolver ao Concierge</button></div>
+    <div class="liverow" id="liverow"><input id="msgin" onkeydown="if(event.key==='Enter')sendMsg()" placeholder="Escreva como Dr. Marcos..."><button id="sendbtn" onclick="sendMsg()" style="flex:none;width:42px;height:42px;border:0;border-radius:50%;background:#0049CD;color:#fff;font-size:17px;cursor:pointer">➤</button><button class="devol" onclick="devolver()">Devolver ao Concierge</button></div>
     <div class="hint" id="chint">O Concierge sai de cena enquanto você atende — e reassume após 5 min sem mensagens.</div>
   </div>
 </div>
@@ -480,6 +480,13 @@ function entrar(){
  var th=document.getElementById('thread');
  th.innerHTML+='<div class="sysn">🩺 <b>Dr. Marcos Alves</b> entrou na conversa — o Concierge pausou.</div>';
  th.scrollTop=th.scrollHeight;
+}
+function hora(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+function sendMsg(){
+ var i=document.getElementById('msgin');var v=(i.value||'').trim();if(!v)return;
+ var th=document.getElementById('thread');
+ th.innerHTML+=bub({t:'medico',v:v,time:hora()});
+ i.value='';th.scrollTop=th.scrollHeight;
 }
 function devolver(silent){
  if(!document.getElementById('liverow').classList.contains('on'))return;
