@@ -79,7 +79,8 @@ body{background:#F5F7FA;overflow:hidden}
 
 <!-- FILA -->
 <div class="screen on" id="sc-fila">
-  <div class="wtop"><h1>Chamados</h1><div class="who">RG Doctor · Dr. Marcos Alves · CRM-SP 128.443</div></div>
+  <div class="wtop" style="display:flex;align-items:flex-end;justify-content:space-between"><div><h1>Chamados</h1><div class="who">RG Doctor · Dr. Marcos Alves · CRM-SP 128.443</div></div>
+<div onclick="show('config')" style="width:40px;height:40px;border-radius:50%;background:#0049CD;color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;margin-bottom:2px">MA</div></div>
   <div class="search">🔍 Buscar paciente...</div>
   <div class="chips"><span class="chip on">Todos</span><span class="chip">Precisam de você</span><span class="chip">Tratamento</span><span class="chip">Acompanhamento</span></div>
   <div class="notifbar" onclick="show('caso')">🔔 1 caso precisa de você — João Ribeiro · responder até 12h ›</div>
@@ -121,6 +122,7 @@ body{background:#F5F7FA;overflow:hidden}
 <!-- AGENDA e PACIENTES = desktop embutido -->
 <div class="screen" id="sc-agenda"><iframe class="frame" data-src="medico.html#agenda-bare"></iframe></div>
 <div class="screen" id="sc-pacientes"><iframe class="frame" data-src="medico.html#carteira-bare"></iframe></div>
+<div class="screen" id="sc-config"><div class="ftitle"><span style="color:#0049CD;font-weight:800" onclick="show('fila')">‹ voltar</span>Configurações · Dr. Marcos Alves</div><iframe class="frame" data-src="medico.html#perfil-bare"></iframe></div>
 <div class="screen" id="sc-evidence"><iframe class="frame" data-src="medico.html#evidence-bare"></iframe></div>
 <div class="screen" id="sc-dash"><iframe class="frame" data-src="medico.html#dashboards-bare"></iframe></div>
 
