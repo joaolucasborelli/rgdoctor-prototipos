@@ -4830,7 +4830,7 @@ document.addEventListener('DOMContentLoaded',function(){
 .gtagr{float:right;font-size:10px;font-weight:800;padding:3px 9px;border-radius:999px;background:#FDECEA;color:#C4362B}
 .gclose{float:right;border:0;background:none;font-size:20px;color:#8896AC;cursor:pointer}
 </style>
-<button id="gateFab">Resultados · Renovações · Barrados</button>
+
 <div id="gateBox"><div id="gateIn">
 <button class="gclose" onclick="document.getElementById('gateBox').classList.remove('on')">✕</button>
 <h2>Central do dia — Dr. Marcos</h2>
@@ -4859,7 +4859,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </div></div>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
- document.getElementById('gateFab').onclick=function(){document.getElementById('gateBox').classList.add('on')};
+ 
  document.querySelectorAll('.gtab').forEach(function(t){t.onclick=function(){
   document.querySelectorAll('.gtab').forEach(function(x){x.classList.remove('on')});t.classList.add('on');
   document.querySelectorAll('.gpane').forEach(function(p){p.classList.toggle('on',p.dataset.p===t.dataset.g)});}});
