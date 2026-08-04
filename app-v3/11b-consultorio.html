@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RG Saúde — Consultório</title>
+<script src="api.js"></script>
+<link rel="stylesheet" href="_core.css">
+<script src="_locais.js?v=3"></script>
+<style>
+  :root{ --gx:20px }
+  body{background:#F4F6FA}
+  .phone{background:#F4F6FA}
+  .content{top:0;bottom:0;background:#F4F6FA}
+
+  /* ── capa */
+  .hero{position:relative;height:236px;background:#DFE4EC}
+  .hero img{width:100%;height:100%;object-fit:cover;display:block}
+  .hero::after{content:'';position:absolute;inset:0;
+               background:linear-gradient(to bottom,rgba(0,0,0,.28) 0 22%,rgba(0,0,0,0) 46%)}
+  .back{position:absolute;top:56px;left:16px;z-index:5;width:38px;height:38px;border-radius:50%;
+        background:rgba(255,255,255,.92);border:0;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+  .back svg{width:18px;height:18px;stroke:#0D0F14;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .fotos{position:absolute;right:16px;bottom:14px;z-index:4;background:rgba(13,15,20,.62);color:#fff;
+         border-radius:20px;padding:7px 12px;backdrop-filter:blur(6px);
+         font:700 10.5px/1 'Plus Jakarta Sans',sans-serif}
+
+  /* ── cabeçalho */
+  /* NÃO usar a classe .sheet aqui: o _core.css tem um bottom-sheet com esse
+     nome (position:absolute + translateY(100%)) que jogava a página pra fora
+     da tela e deixava tudo em branco. */
+  .pgw{position:relative;margin-top:-22px;background:#F4F6FA;border-radius:24px 24px 0 0;
+       padding:22px var(--gx) 0}
+  .h-nome{font:900 24px/1.18 'Plus Jakarta Sans',sans-serif;color:#0D0F14;letter-spacing:-.6px}
+  .h-sub{font:500 13px/1.5 'Plus Jakarta Sans',sans-serif;color:#6B7280;margin-top:6px}
+  .h-linha{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .st{display:flex;align-items:center;gap:5px}
+  .st svg{width:14px;height:14px;fill:#F0B22A}
+  .st b{font:800 14px 'Plus Jakarta Sans',sans-serif;color:#0D0F14}
+  .st span{font:500 12.5px 'Plus Jakarta Sans',sans-serif;color:#9CA3AF}
+  .pill{border-radius:20px;padding:6px 11px;font:800 10.5px/1 'Plus Jakarta Sans',sans-serif}
+  .pill.ok{background:#E8F6EE;color:#1C8548}
+  .pill.hoje{background:#EAF1FE;color:#2563EB}
+
+  .sec{margin-top:26px}
+  .lb{font:800 10.5px 'Plus Jakarta Sans',sans-serif;color:#9CA3AF;letter-spacing:.14em;
+      text-transform:uppercase;margin-bottom:11px}
+  .box{background:#fff;border-radius:18px;padding:16px;box-shadow:0 1px 3px rgba(13,15,20,.05)}
+  .p{font:500 13.5px/1.62 'Plus Jakarta Sans',sans-serif;color:#4B5563}
+
+  .info{display:flex;gap:12px;align-items:flex-start}
+  .info+.info{margin-top:15px;padding-top:15px;border-top:1px solid rgba(0,0,0,.05)}
+  .info .ic{width:34px;height:34px;border-radius:10px;background:#EAF1FE;color:#2563EB;flex-shrink:0;
+            display:flex;align-items:center;justify-content:center}
+  .info .ic svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;
+                stroke-linecap:round;stroke-linejoin:round}
+  /* os textos são <span> dentro de <span>: sem display:block eles grudam um no outro */
+  .info .tt{display:block;font:700 13px/1.35 'Plus Jakarta Sans',sans-serif;color:#0D0F14}
+  .info .dd{display:block;font:500 12px/1.45 'Plus Jakarta Sans',sans-serif;color:#6B7280;margin-top:3px}
+  .info>span:last-child{flex:1;min-width:0}
+
+  /* planos */
+  .planos{display:flex;flex-wrap:wrap;gap:7px}
+  .pl{border-radius:20px;padding:8px 13px;font:700 11.5px/1 'Plus Jakarta Sans',sans-serif;
+      background:#EDEEF2;color:#4B5563}
+  .pl.meu{background:#E8F6EE;color:#1C8548}
+
+  /* equipe */
+  .eq{display:flex;align-items:center;gap:12px}
+  .eq+.eq{margin-top:14px;padding-top:14px;border-top:1px solid rgba(0,0,0,.05)}
+  .eq img{width:46px;height:46px;border-radius:50%;flex-shrink:0;object-fit:cover}
+  .eq>span:last-child{flex:1;min-width:0}
+  .eq .nn{display:block;font:800 14px 'Plus Jakarta Sans',sans-serif;color:#0D0F14}
+  .eq .pp{display:block;font:500 11.5px/1.4 'Plus Jakarta Sans',sans-serif;color:#6B7280;margin-top:3px}
+
+  /* galeria */
+  .gal{display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;
+       margin:0 calc(var(--gx)*-1);padding:0 var(--gx)}
+  .gal::-webkit-scrollbar{display:none}
+  .gal img{width:150px;height:106px;border-radius:14px;object-fit:cover;flex-shrink:0}
+
+  /* avaliações */
+  .rev-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+  .rev-n{font:900 38px/1 'Plus Jakarta Sans',sans-serif;color:#0D0F14;letter-spacing:-1px}
+  .rev-est svg{width:13px;height:13px;fill:#F0B22A;margin-right:1px}
+  .rev-q{font:500 11.5px 'Plus Jakarta Sans',sans-serif;color:#9CA3AF;margin-top:4px}
+  .rv+.rv{margin-top:14px;padding-top:14px;border-top:1px solid rgba(0,0,0,.05)}
+  .rv-h{display:flex;align-items:center;gap:9px}
+  .rv-av{width:30px;height:30px;border-radius:50%;background:#EAF1FE;color:#2563EB;flex-shrink:0;
+         display:flex;align-items:center;justify-content:center;
+         font:800 11.5px 'Plus Jakarta Sans',sans-serif}
+  .rv-a{font:800 12.5px 'Plus Jakarta Sans',sans-serif;color:#0D0F14}
+  .rv-q{font:500 11px 'Plus Jakarta Sans',sans-serif;color:#9CA3AF;margin-top:2px}
+  .rv-est{margin-left:auto}
+  .rv-est svg{width:11px;height:11px;fill:#F0B22A;margin-left:1px}
+  .rv-t{font:500 13px/1.6 'Plus Jakarta Sans',sans-serif;color:#4B5563;margin-top:9px}
+
+  /* barra de ação — fica FORA do .content, senão rola junto com a página
+     (um absolute dentro de um container que rola acompanha o scroll) */
+  .acao{position:absolute;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);
+        backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+        border-top:1px solid rgba(0,0,0,.06);
+        padding:12px var(--gx) calc(14px + env(safe-area-inset-bottom,0px));
+        display:flex;align-items:center;gap:10px;z-index:30}
+  .acao .info2{flex:1;min-width:0}
+  .acao .v{display:block;font:800 15px 'Plus Jakarta Sans',sans-serif;color:#0D0F14}
+  .acao .s{display:block;font:500 11px 'Plus Jakarta Sans',sans-serif;color:#6B7280;margin-top:2px}
+  .acao button{border:0;background:#2563EB;color:#fff;border-radius:14px;padding:14px 22px;
+               font:800 14px 'Plus Jakarta Sans',sans-serif;cursor:pointer;flex-shrink:0}
+  .acao button:active{transform:scale(.98)}
+  .fim{height:104px}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="content" id="c"></div>
+  <div class="acao" id="acao"></div>
+</div>
+
+<script>
+const id = new URLSearchParams(location.search).get('id') || 'marcos';
+const x  = localPorId(id) || LOCAIS[0];
+const MEU_PLANO = 'Unimed Nacional';
+const cobre = x.planos.includes(MEU_PLANO);
+
+const EST = n => Array.from({length:5},(_,i)=>
+  `<svg viewBox="0 0 24 24" style="opacity:${i<Math.round(n)?1:.22}"><polygon points="12,2 15,9 22,9.5 16.5,14 18,21 12,17.5 6,21 7.5,14 2,9.5 9,9"/></svg>`).join('');
+
+document.getElementById('c').innerHTML = `
+  <div class="hero">
+    <img src="${fotoDe(x,true)}" onerror="this.onerror=null;this.src='${desenhoDe(x,true)}'" alt="">
+    <button class="back" onclick="history.length>1?history.back():location.href='11-busca.html'" aria-label="Voltar">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span class="fotos">1 de 6 fotos</span>
+  </div>
+
+  <div class="pgw">
+    <div class="h-nome">${x.nome}</div>
+    <div class="h-sub">${[x.especialidade||x.sub, x.registro].filter(Boolean).join(' · ')}</div>
+    <div class="h-linha">
+      <span class="st">
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9.5 16.5,14 18,21 12,17.5 6,21 7.5,14 2,9.5 9,9"/></svg>
+        <b>${String(x.nota).replace('.',',')}</b>
+        <span>· ${x.avaliacoes.toLocaleString('pt-BR')} avaliações</span>
+      </span>
+      ${cobre?'<span class="pill ok">Atende seu plano</span>':''}
+      ${x.hoje?'<span class="pill hoje">Atende hoje</span>':''}
+    </div>
+
+    <div class="sec">
+      <div class="box"><div class="p">${x.sobre}</div></div>
+    </div>
+
+    <div class="sec">
+      <div class="lb">Onde e quando</div>
+      <div class="box">
+        <div class="info">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <span><span class="tt">${x.endereco}</span><span class="dd">${String(x.km).replace('.',',')} km de casa</span></span>
+        </div>
+        <div class="info">
+          <span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></span>
+          <span><span class="tt">${x.horarios}</span><span class="dd">${x.tempoMedio}</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="lb">Planos aceitos</div>
+      <div class="box">
+        <div class="planos">
+          ${x.planos.map(p=>`<span class="pl${p===MEU_PLANO?' meu':''}">${p}${p===MEU_PLANO?' ✓':''}</span>`).join('')}
+        </div>
+        ${cobre
+          ? `<div class="p" style="margin-top:13px;font-size:12.5px">Seu plano está na lista — a consulta não sai do seu bolso.</div>`
+          : `<div class="p" style="margin-top:13px;font-size:12.5px">Seu plano não está na lista. Particular a partir de <b>R$ ${x.preco}</b>.</div>`}
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="lb">Quem atende</div>
+      <div class="box">
+        ${x.equipe.map(m=>`
+          <div class="eq">
+            <img src="${retratoDe(m.nome,m.cor,m.foto)}"
+                 onerror="this.onerror=null;this.src='${retratoDe('X','#8A93A0')}'" alt="">
+            <span><span class="nn">${m.nome}</span><span class="pp">${m.papel}</span></span>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="lb">O lugar</div>
+      <div class="gal">
+        ${(x.fotos && x.fotos.length
+            ? x.fotos.map(f=>`<img src="${f}" onerror="this.onerror=null;this.src='${desenhoDe(x)}'" alt="">`)
+            : [1,2,3,0].map(i=>`<img src="${fotoDe({cor:i%2?x.cor2:x.cor,cor2:i%2?x.cor:x.cor2})}" alt="">`)
+          ).join('')}
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="lb">O que dizem</div>
+      <div class="box">
+        <div class="rev-top">
+          <div>
+            <div class="rev-n">${String(x.nota).replace('.',',')}</div>
+            <div class="rev-est">${EST(x.nota)}</div>
+            <div class="rev-q">${x.avaliacoes.toLocaleString('pt-BR')} avaliações de quem foi</div>
+          </div>
+        </div>
+        ${x.comentarios.map(c=>`
+          <div class="rv">
+            <div class="rv-h">
+              <span class="rv-av">${c.autor[0]}</span>
+              <span><span class="rv-a">${c.autor}</span><span class="rv-q">${c.quando}</span></span>
+              <span class="rv-est">${EST(c.nota)}</span>
+            </div>
+            <div class="rv-t">${c.txt}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="fim"></div>
+  </div>`;
+
+document.getElementById('acao').innerHTML = `
+  <div class="info2">
+    <span class="v">${cobre?'Coberto pelo plano':'R$ '+x.preco}</span>
+    <span class="s">${cobre?MEU_PLANO:'consulta particular'}</span>
+  </div>
+  <button onclick="window.open('${whatsappDe(x)}','_blank','noopener')">
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" style="vertical-align:-2px;margin-right:6px">
+      <path d="M17.5 14.4c-.3-.2-1.8-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-1.7-.9-2.9-1.6-4-3.5-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.4 1.9.8 2.6.9 3.5.8.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.5z"/>
+      <path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2z"/>
+    </svg>Entrar em contato</button>`;
+</script>
+</body>
+</html>

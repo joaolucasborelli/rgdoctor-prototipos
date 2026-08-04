@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RG Saúde — Busca</title>
+<script src="api.js"></script>
+<link rel="stylesheet" href="_core.css">
+<script src="_locais.js?v=3"></script>
+<style>
+  :root{ --gx: 20px; }               /* a margem única da tela — tudo alinha por ela */
+  body{background:#F4F6FA}
+  .phone{background:#F4F6FA}
+  .content{top:50px;background:#F4F6FA}
+
+  .bs-head{padding:22px var(--gx) 0}
+  .bs-title{font:900 26px/1.05 'Plus Jakarta Sans',sans-serif;color:#0D0F14;letter-spacing:-.7px}
+  .bs-sub{font:500 13px/1.5 'Plus Jakarta Sans',sans-serif;color:#6B7280;margin-top:6px}
+
+  /* ── campo de busca, com o filtro dentro dele */
+  .bs-search{margin:16px var(--gx) 0;background:#fff;border:1px solid rgba(0,0,0,.07);
+             border-radius:16px;padding:5px 5px 5px 15px;display:flex;align-items:center;gap:10px;
+             box-shadow:0 1px 6px rgba(0,0,0,.04)}
+  .bs-search:focus-within{border-color:rgba(37,99,235,.4);box-shadow:0 0 0 3px rgba(37,99,235,.07)}
+  .bs-search>svg{width:17px;height:17px;stroke:#9CA3AF;fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0}
+  .bs-search input{border:0;outline:0;background:transparent;flex:1;min-width:0;padding:11px 0;
+                   font:500 13.5px 'Plus Jakarta Sans',sans-serif;color:#0D0F14}
+  .bs-search input::placeholder{color:#9CA3AF}
+  .bs-fbtn{position:relative;flex-shrink:0;width:38px;height:38px;border:0;border-radius:12px;
+           background:#EAF1FE;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .bs-fbtn:active{transform:scale(.94)}
+  .bs-fbtn svg{width:17px;height:17px;stroke:#2563EB;fill:none;stroke-width:2.1;stroke-linecap:round}
+  .bs-fbtn .badge{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;border-radius:9px;
+                  background:#2563EB;color:#fff;border:2px solid #F4F6FA;
+                  font:800 9.5px/13px 'Plus Jakarta Sans',sans-serif;text-align:center;padding:0 3px}
+
+  /* ── categorias */
+  .bs-cats{display:flex;gap:8px;padding:14px var(--gx) 0;overflow-x:auto;scrollbar-width:none}
+  .bs-cats::-webkit-scrollbar{display:none}
+  .cat{border:0;border-radius:22px;padding:9px 15px;white-space:nowrap;cursor:pointer;
+       font:700 12px/1 'Plus Jakarta Sans',sans-serif;background:#EDEEF2;color:#4B5563}
+  .cat.on{background:#2563EB;color:#fff}
+  .cat.soon{background:#F2F3F6;color:#B0B6BF}
+
+  .bs-conta{padding:18px var(--gx) 0;display:flex;align-items:baseline;gap:7px}
+  .bs-conta b{font:800 13px 'Plus Jakarta Sans',sans-serif;color:#1C8548}
+  .bs-conta span{font:500 12.5px 'Plus Jakarta Sans',sans-serif;color:#9CA3AF}
+
+  /* ── os cards */
+  .bs-lista{padding:14px var(--gx) 24px;display:flex;flex-direction:column;gap:14px}
+  .card{background:#fff;border-radius:20px;overflow:hidden;cursor:pointer;
+        box-shadow:0 1px 3px rgba(13,15,20,.05),0 6px 20px rgba(13,15,20,.05);
+        transition:transform .14s,box-shadow .14s}
+  .card:active{transform:scale(.985)}
+  .c-foto{position:relative;height:132px;background:#E9EDF3}
+  .c-foto img{width:100%;height:100%;object-fit:cover;display:block}
+  .c-selo{position:absolute;left:12px;bottom:12px;display:inline-flex;align-items:center;gap:6px;
+          border-radius:20px;padding:7px 12px;backdrop-filter:blur(8px);
+          font:800 10.5px/1 'Plus Jakarta Sans',sans-serif}
+  .c-selo.cobre{background:rgba(232,246,238,.94);color:#1C8548}
+  .c-selo.part{background:rgba(255,255,255,.94);color:#4B5563}
+  .c-selo svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.8;
+              stroke-linecap:round;stroke-linejoin:round}
+  .c-hoje{position:absolute;right:12px;top:12px;background:rgba(13,15,20,.72);color:#fff;
+          border-radius:20px;padding:6px 11px;font:800 10px/1 'Plus Jakarta Sans',sans-serif;
+          backdrop-filter:blur(6px)}
+
+  .c-body{padding:15px 16px 16px}
+  .c-l1{display:flex;align-items:flex-start;gap:10px}
+  .c-nome{flex:1;min-width:0;font:800 16px/1.25 'Plus Jakarta Sans',sans-serif;color:#0D0F14;letter-spacing:-.3px}
+  .c-nota{display:flex;align-items:center;gap:4px;flex-shrink:0;padding-top:2px}
+  .c-nota svg{width:13px;height:13px;fill:#F0B22A}
+  .c-nota b{font:800 13px 'Plus Jakarta Sans',sans-serif;color:#0D0F14}
+  .c-esp{font:500 12px/1.45 'Plus Jakarta Sans',sans-serif;color:#6B7280;margin-top:5px}
+  .c-l3{display:flex;align-items:center;gap:6px;margin-top:11px;
+        font:500 12px 'Plus Jakarta Sans',sans-serif;color:#9CA3AF}
+  .c-l3 svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+  .c-l3 .sep{opacity:.5}
+  .c-preco{font:700 12px 'Plus Jakarta Sans',sans-serif;color:#4B5563}
+
+  .bs-vazio{padding:44px var(--gx);text-align:center;
+            font:500 13px 'Plus Jakarta Sans',sans-serif;color:#9CA3AF}
+
+  /* ── folha de filtros */
+  .ov{position:absolute;inset:0;background:rgba(13,15,20,.45);z-index:60;display:none}
+  .ov.on{display:block}
+  .sh{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:26px 26px 0 0;
+      padding:12px var(--gx) 20px;transform:translateY(100%);
+      transition:transform .3s cubic-bezier(.2,.8,.2,1);max-height:88%;overflow-y:auto}
+  .ov.on .sh{transform:none}
+  .sh::-webkit-scrollbar{width:0}
+  .sh-grip{width:38px;height:4px;border-radius:3px;background:#DDE1E8;margin:0 auto 16px}
+  .sh-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+  .sh-t{font:900 22px 'Plus Jakarta Sans',sans-serif;color:#0D0F14;letter-spacing:-.5px}
+  .sh-limpar{background:0;border:0;color:#2563EB;font:800 12.5px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+  .sh-lb{font:800 10.5px 'Plus Jakarta Sans',sans-serif;color:#9CA3AF;letter-spacing:.13em;
+         text-transform:uppercase;margin:22px 0 10px}
+
+  .pl-in{background:#F4F6FA;border:1px solid rgba(0,0,0,.06);border-radius:13px;padding:12px 14px;
+         display:flex;align-items:center;gap:9px}
+  .pl-in svg{width:15px;height:15px;stroke:#9CA3AF;fill:none;stroke-width:2;stroke-linecap:round}
+  .pl-in input{flex:1;border:0;outline:0;background:transparent;
+               font:600 13.5px 'Plus Jakarta Sans',sans-serif;color:#0D0F14}
+  .pl-in input::placeholder{color:#9CA3AF;font-weight:500}
+  .pl-sug{margin-top:8px;display:flex;flex-direction:column;gap:1px}
+  .pl-sug button{border:0;background:#fff;text-align:left;padding:11px 14px;cursor:pointer;
+                 font:600 13px 'Plus Jakarta Sans',sans-serif;color:#4B5563;border-radius:10px}
+  .pl-sug button:hover{background:#F4F6FA;color:#0D0F14}
+  .pl-atual{display:inline-flex;align-items:center;gap:8px;background:#EAF1FE;color:#2563EB;
+            border-radius:20px;padding:9px 14px;margin-top:10px;
+            font:800 12.5px 'Plus Jakarta Sans',sans-serif}
+  .pl-atual button{border:0;background:0;color:#2563EB;cursor:pointer;font-size:15px;line-height:1;padding:0}
+
+  .lin{display:flex;align-items:center;gap:12px;background:#F4F6FA;border-radius:15px;
+       padding:14px 15px;margin-top:10px}
+  .lin .ic{width:36px;height:36px;border-radius:11px;background:#fff;color:#2563EB;flex-shrink:0;
+           display:flex;align-items:center;justify-content:center}
+  .lin .ic svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;
+               stroke-linecap:round;stroke-linejoin:round}
+  .lin>span:nth-child(2){flex:1;min-width:0}
+  .lin .tt{display:block;font:800 13.5px 'Plus Jakarta Sans',sans-serif;color:#0D0F14}
+  .lin .dd{display:block;font:500 11.5px/1.4 'Plus Jakarta Sans',sans-serif;color:#6B7280;margin-top:3px}
+  .sw{margin-left:auto;width:46px;height:27px;border-radius:14px;background:#2563EB;position:relative;
+      cursor:pointer;flex-shrink:0;transition:.18s}
+  .sw.off{background:#D6DBE3}
+  .sw i{position:absolute;top:3px;left:22px;width:21px;height:21px;border-radius:50%;background:#fff;transition:.18s}
+  .sw.off i{left:3px}
+
+  .rg input{width:100%;accent-color:#2563EB;margin-top:4px}
+  .rg .l{display:flex;justify-content:space-between;margin-top:4px}
+  .rg b{font:800 12.5px 'Plus Jakarta Sans',sans-serif;color:#0D0F14}
+  .rg span{font:500 11.5px 'Plus Jakarta Sans',sans-serif;color:#9CA3AF}
+
+  .sh-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:0;border-radius:22px;padding:9px 15px;cursor:pointer;
+        font:700 12px/1 'Plus Jakarta Sans',sans-serif;background:#EDEEF2;color:#4B5563}
+  .chip.on{background:#2563EB;color:#fff}
+
+  .sh-cta{width:100%;border:0;background:#2563EB;color:#fff;border-radius:15px;padding:16px;margin-top:26px;
+          font:800 15px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span class="right"><svg width="24" height="11" viewBox="0 0 24 11" fill="none"><rect x="1" y="1" width="20" height="9" rx="2" stroke="currentColor" stroke-opacity=".35"/><rect x="2.5" y="2.5" width="17" height="6" rx="1" fill="currentColor"/></svg></span></div>
+
+  <div class="content">
+    <div class="bs-head anim anim-d1">
+      <div class="bs-title">Busca</div>
+      <div class="bs-sub">Quem atende o seu plano, perto de você</div>
+    </div>
+
+    <div class="bs-search anim anim-d1">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/></svg>
+      <input id="q" placeholder="Médico, clínica, exame ou especialidade" oninput="pinta()">
+      <button class="bs-fbtn" onclick="abrir()" aria-label="Filtros">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="17" x2="14" y2="17"/></svg>
+        <span class="badge" id="fb">3</span>
+      </button>
+    </div>
+
+    <div class="bs-cats anim anim-d2">
+      <button class="cat on"   onclick="cat(this,'medico')">Médicos</button>
+      <button class="cat"      onclick="cat(this,'clinica')">Clínicas</button>
+      <button class="cat soon" onclick="breve()">Exames</button>
+      <button class="cat soon" onclick="breve()">Medicamentos</button>
+    </div>
+
+    <div class="bs-conta anim anim-d3" id="conta"></div>
+    <div class="bs-lista anim anim-d3" id="lista"></div>
+  </div>
+
+  <!-- folha de filtros -->
+  <div class="ov" id="ov" onclick="if(event.target===this)fechar()">
+    <div class="sh">
+      <div class="sh-grip"></div>
+      <div class="sh-top">
+        <div class="sh-t">Filtros</div>
+        <button class="sh-limpar" onclick="limpar()">Limpar tudo</button>
+      </div>
+
+      <div class="sh-lb">Plano de saúde</div>
+      <div class="pl-in">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/></svg>
+        <input id="plano" placeholder="Digite o seu plano" oninput="sugerePlano()" autocomplete="off">
+      </div>
+      <div class="pl-sug" id="plsug"></div>
+      <div id="plAtualWrap"></div>
+
+      <div class="sh-lb">Onde e quando</div>
+      <div class="lin">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+        <span><span class="tt">Mais próximo primeiro</span><span class="dd">a partir da Rua Vergueiro, 2.000</span></span>
+        <span class="sw" id="swProx" onclick="tg('prox',this)"><i></i></span>
+      </div>
+      <div class="lin">
+        <span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></span>
+        <span><span class="tt">Atende hoje</span><span class="dd">com horário livre nas próximas horas</span></span>
+        <span class="sw off" id="swHoje" onclick="tg('hoje',this)"><i></i></span>
+      </div>
+      <div class="lin">
+        <span class="ic"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <span><span class="tt">Só quem cobre meu plano</span><span class="dd" id="ddCobre"></span></span>
+        <span class="sw" id="swCobre" onclick="tg('cobre',this)"><i></i></span>
+      </div>
+
+      <div class="sh-lb">Distância</div>
+      <div class="rg">
+        <input type="range" min="1" max="20" value="5" id="km" oninput="kmMuda()">
+        <div class="l"><b id="kmT">até 5 km</b><span>de casa</span></div>
+      </div>
+
+      <div class="sh-lb">Especialidade</div>
+      <div class="sh-chips" id="esp"></div>
+
+      <button class="sh-cta" onclick="fechar()">Ver <span id="ctaN">0</span> resultados</button>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab" onclick="window.location.href='01-saude.html'">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="9"/></svg>
+      <span class="tab-label">Meu RG</span>
+    </div>
+    <div class="tab" onclick="window.location.href='09-exames-lista.html'">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span class="tab-label">Documentos</span>
+    </div>
+    <div class="tab" onclick="window.location.href='13-concierge.html'">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/><line x1="18.4" y1="5.6" x2="5.6" y2="18.4"/></svg>
+      <span class="tab-label">Concierge</span>
+    </div>
+    <div class="tab active">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/></svg>
+      <span class="tab-label">Busca</span>
+    </div>
+    <div class="tab" onclick="window.location.href='12-qr-code.html'">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="14" y1="21" x2="21" y2="21"/></svg>
+      <span class="tab-label">QR Code</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const PLANOS = ['Unimed Nacional','Bradesco Saúde','SulAmérica','Amil','Porto Seguro Saúde',
+                'NotreDame Intermédica','Hapvida','Golden Cross','Particular'];
+
+let CAT='medico';
+let FIL = { plano:'Unimed Nacional', prox:true, hoje:false, cobre:true, km:5, esp:null };
+
+/* ── filtros ─────────────────────────────────────────── */
+function abrir(){ document.getElementById('ov').classList.add('on'); }
+function fechar(){ document.getElementById('ov').classList.remove('on'); pinta(); }
+function tg(k,el){ FIL[k]=!FIL[k]; el.classList.toggle('off',!FIL[k]); pinta(); }
+function kmMuda(){ FIL.km=+document.getElementById('km').value;
+  document.getElementById('kmT').textContent='até '+FIL.km+' km'; pinta(); }
+function limpar(){
+  FIL={ plano:null, prox:true, hoje:false, cobre:false, km:20, esp:null };
+  document.getElementById('plano').value='';
+  document.getElementById('km').value=20;
+  document.getElementById('kmT').textContent='até 20 km';
+  document.getElementById('swProx').classList.remove('off');
+  document.getElementById('swHoje').classList.add('off');
+  document.getElementById('swCobre').classList.add('off');
+  sugerePlano(); montaEsp(); pinta();
+}
+function sugerePlano(){
+  const v=(document.getElementById('plano').value||'').toLowerCase();
+  const lista = v ? PLANOS.filter(p=>p.toLowerCase().includes(v)).slice(0,4) : [];
+  document.getElementById('plsug').innerHTML =
+    lista.map(p=>`<button onclick="escolhePlano('${p}')">${p}</button>`).join('');
+  const w=document.getElementById('plAtualWrap');
+  w.innerHTML = FIL.plano
+    ? `<div class="pl-atual">${FIL.plano}<button onclick="tiraPlano()" aria-label="Remover">×</button></div>` : '';
+}
+function escolhePlano(p){
+  FIL.plano=p; document.getElementById('plano').value='';
+  sugerePlano(); pinta();
+}
+function tiraPlano(){ FIL.plano=null; sugerePlano(); pinta(); }
+
+function montaEsp(){
+  const espec=[...new Set(LOCAIS.filter(l=>l.tipo===CAT).map(l=>l.especialidade))].filter(Boolean);
+  document.getElementById('esp').innerHTML = espec.map(e=>
+    `<button class="chip${FIL.esp===e?' on':''}" onclick="pickEsp('${e}')">${e}</button>`).join('')
+    || '<span style="font:500 12.5px \'Plus Jakarta Sans\';color:#9CA3AF">Não se aplica a clínicas.</span>';
+}
+function pickEsp(e){ FIL.esp = (FIL.esp===e ? null : e); montaEsp(); pinta(); }
+
+function contaFiltros(){
+  let n=0;
+  if(FIL.plano) n++;
+  if(FIL.hoje) n++;
+  if(FIL.cobre) n++;
+  if(FIL.esp) n++;
+  if(FIL.km<20) n++;
+  return n;
+}
+
+/* ── lista ───────────────────────────────────────────── */
+function filtra(){
+  const q=(document.getElementById('q').value||'').toLowerCase();
+  let l=LOCAIS.filter(x=>x.tipo===CAT);
+  if(FIL.cobre && FIL.plano) l=l.filter(x=>x.planos.includes(FIL.plano));
+  if(FIL.hoje) l=l.filter(x=>x.hoje);
+  if(FIL.esp)  l=l.filter(x=>x.especialidade===FIL.esp);
+  l=l.filter(x=>x.km<=FIL.km);
+  if(q) l=l.filter(x=>(x.nome+' '+x.especialidade+' '+x.bairro).toLowerCase().includes(q));
+  if(FIL.prox) l=[...l].sort((a,b)=>a.km-b.km);
+  else l=[...l].sort((a,b)=>b.nota-a.nota);
+  return l;
+}
+
+function pinta(){
+  const l=filtra();
+  const cobre = FIL.plano ? l.filter(x=>x.planos.includes(FIL.plano)).length : 0;
+  const outros = l.length-cobre;
+
+  document.getElementById('fb').textContent = contaFiltros();
+  document.getElementById('fb').style.display = contaFiltros() ? '' : 'none';
+  document.getElementById('ctaN').textContent = l.length;
+  document.getElementById('ddCobre').textContent = FIL.plano
+    ? 'esconde quem não atende '+FIL.plano : 'escolha um plano acima';
+
+  document.getElementById('conta').innerHTML = FIL.plano
+    ? `<b>${cobre} ${cobre===1?'atende':'atendem'} seu plano</b>${outros?`<span>· ${outros} particular${outros>1?'es':''}</span>`:''}`
+    : `<b>${l.length} ${l.length===1?'resultado':'resultados'}</b><span>· sem filtro de plano</span>`;
+
+  document.getElementById('lista').innerHTML = l.map(x=>{
+    const cob = FIL.plano && x.planos.includes(FIL.plano);
+    return `<div class="card" onclick="location.href='11b-consultorio.html?id=${x.id}'">
+      <div class="c-foto">
+        <img src="${fotoDe(x)}" onerror="this.onerror=null;this.src='${desenhoDe(x)}'" alt="">
+        ${x.hoje?'<span class="c-hoje">Atende hoje</span>':''}
+        ${cob
+          ? '<span class="c-selo cobre"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Atende seu plano</span>'
+          : `<span class="c-selo part">Particular · a partir de R$ ${x.preco}</span>`}
+      </div>
+      <div class="c-body">
+        <div class="c-l1">
+          <div class="c-nome">${x.nome}</div>
+          <div class="c-nota">
+            <svg viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9.5 16.5,14 18,21 12,17.5 6,21 7.5,14 2,9.5 9,9"/></svg>
+            <b>${String(x.nota).replace('.',',')}</b>
+          </div>
+        </div>
+        <div class="c-esp">${x.especialidade||x.sub} · ${x.registro||''}</div>
+        <div class="c-l3">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          ${String(x.km).replace('.',',')} km · ${x.bairro}
+          <span class="sep">·</span>
+          <span>${x.avaliacoes.toLocaleString('pt-BR')} avaliações</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('') || `<div class="bs-vazio">Nenhum resultado com esses filtros.<br>Tente aumentar a distância ou tirar o filtro de plano.</div>`;
+}
+
+function cat(btn,c){
+  document.querySelectorAll('.cat').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); CAT=c; FIL.esp=null; montaEsp(); pinta();
+}
+function breve(){ alert('Exames e medicamentos entram nas próximas fases.'); }
+
+sugerePlano(); montaEsp(); pinta();
+</script>
+</body>
+</html>

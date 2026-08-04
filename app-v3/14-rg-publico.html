@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RG da Saúde — vita id</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#FAFAFA; --card:#FFFFFF; --fg:#18181B; --muted:#71717A; --border:#E4E4E7; }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',sans-serif;-webkit-tap-highlight-color:transparent}
+  body{background:var(--bg);color:var(--fg);min-height:100vh}
+  .pub-wrap{max-width:440px;margin:0 auto;padding:34px 18px 40px}
+  /* topo: foto + nome */
+  .pub-top{text-align:center;margin-bottom:20px}
+  .pub-eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+  .pub-foto{width:124px;height:124px;border-radius:50%;margin:0 auto 12px;overflow:hidden;border:3px solid #fff;box-shadow:0 6px 22px rgba(0,0,0,.12),0 0 0 1px var(--border);background:#0D0F14}
+  .pub-foto img{width:100%;height:100%;object-fit:cover;display:block}
+  .pub-foto-ini{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0D0F14;color:#fff;font-size:44px;font-weight:700}
+  .pub-nome{font-size:23px;font-weight:700;color:var(--fg);line-height:1.2}
+  .pub-verif{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--muted);margin-top:7px}
+  .pub-verif svg{width:13px;height:13px;stroke:#2563EB;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  /* ficha (componente real do painel) */
+  .ficha{display:flex;flex-direction:column;gap:14px}
+  .grp{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card)}
+  .grp .gh{font-size:12px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--muted);padding:14px 18px 10px;display:flex;align-items:center;gap:8px}
+  .grp .gh svg{width:14px;height:14px;color:var(--muted);stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .li{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:11px 18px;border-top:1px solid var(--border)}
+  .li .k{font-size:13px;font-weight:400;color:var(--muted);flex:none}
+  .li .v{font-size:14px;font-weight:500;color:var(--fg);text-align:right}
+  .li .v.red{color:#DC2626;font-weight:600}
+  .li .v.dim{color:var(--muted);font-weight:400}
+  .li .v.mono{font-family:'JetBrains Mono',monospace;font-weight:500;letter-spacing:.02em}
+  .li .v a{color:#0D9488;text-decoration:none;font-weight:700}
+  .li.col{flex-direction:column;align-items:flex-start;gap:2px}.li.col .v{text-align:left}
+  .li .sub{font-size:13px;color:var(--muted)}
+  .li .mk{font-size:11px;color:var(--muted);font-weight:400}
+  /* rodape */
+  .footer-micro{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#C4C9D4;text-transform:uppercase;text-align:center;margin:22px 0 6px;overflow:hidden;white-space:nowrap}
+  .footer-note{font-size:11.5px;color:var(--muted);text-align:center;line-height:1.5}
+  /* estados */
+  .center-state{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:30px;text-align:center;color:var(--muted);font-size:14px;font-weight:500}
+  .spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:#2563EB;border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+  <div id="mainContent">
+    <div class="center-state"><div class="spinner"></div>Carregando RG da Saúde…</div>
+  </div>
+
+<script>
+  const API_URL = new URLSearchParams(window.location.search).get('api') === 'local'
+    ? 'http://localhost:3002'
+    : 'https://vitae-app-production.up.railway.app';
+  const bloodMap = { A_POS:'A+', A_NEG:'A-', B_POS:'B+', B_NEG:'B-', AB_POS:'AB+', AB_NEG:'AB-', O_POS:'O+', O_NEG:'O-' };
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function idadeNum(d){ if(!d) return null; const b=new Date(d), n=new Date(); let a=n.getFullYear()-b.getFullYear(); const m=n.getMonth()-b.getMonth(); if(m<0||(m===0&&n.getDate()<b.getDate()))a--; return a; }
+  function fmtData(v){ if(!v) return null; const s=String(v).slice(0,10); const m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); return m?`${m[3]}/${m[2]}/${m[1]}`:null; }
+  function getInitials(name){ if(!name) return '—'; return name.split(/\s+/).filter(Boolean).map(w=>w[0]).join('').toUpperCase().slice(0,2); }
+  function telHref(t){ return String(t||'').replace(/[^\d+]/g,''); }
+
+  const ICON = {
+    pessoa: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+    alerta: '<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 17a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>',
+    capsula: '<path d="m10.5 20.5 9-9a4.95 4.95 0 0 0-7-7l-9 9a4.95 4.95 0 0 0 7 7Z"/>',
+    ecg: '<path d="M3 12h4l2-6 4 12 2-6h4"/>',
+    fone: '<path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L14 14l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 2 6a2 2 0 0 1 2-2Z"/>',
+    check: '<path d="M20 6L9 17l-5-5"/>'
+  };
+  const sIcon = p => `<svg viewBox="0 0 24 24">${p}</svg>`;
+  function grp(icon, titulo, inner){ return `<div class="grp"><div class="gh">${sIcon(icon)} ${titulo}</div>${inner}</div>`; }
+  function liKV(k, v, cls){ if(v==null||v==='') return ''; return `<div class="li"><span class="k">${k}</span><span class="v ${cls||''}">${esc(v)}</span></div>`; }
+  function liEmpty(txt){ return `<div class="li"><span class="v dim">${txt}</span></div>`; }
+  function contatoLi(nome, parentesco, tel, marker){
+    const top = [nome, parentesco].filter(Boolean).map(esc).join(' · ') + (marker?` <span class="mk">(${marker})</span>`:'');
+    const sub = tel?`<span class="sub"><a href="tel:${telHref(tel)}">${esc(tel)}</a></span>`:'';
+    return `<div class="li col"><span class="v">${top||'—'}</span>${sub}</div>`;
+  }
+
+  function render({ usuario, perfil: p, alergias, medicamentos }){
+    usuario = usuario || {}; p = p || {};
+    const nome = p.nomeSocial || usuario.nome || 'Paciente';
+    const blood = bloodMap[p.tipoSanguineo] || p.tipoSanguineo || null;
+    const age = idadeNum(p.dataNascimento);
+    const menor = age != null && age < 18;
+
+    // Dados pessoais
+    let dados = '';
+    dados += liKV('Data de nascimento', fmtData(p.dataNascimento) ? (fmtData(p.dataNascimento) + (age!=null?` (${age} anos)`:'')) : null);
+    // [FASE 0 · Tarefa Zero] camada de emergencia: sem CPF/e-mail/celular/plano no publico
+    dados += liKV('Tipo sanguíneo', blood);
+    if (!dados) dados = liEmpty('Sem dados');
+
+    // Alergias (só nome + reação, vermelho de alerta)
+    const alg = (alergias && alergias.length)
+      ? alergias.map(a=>`<div class="li col"><span class="v red">${esc(a.nome)}</span>${a.reacao?`<span class="sub">Reação: ${esc(a.reacao)}</span>`:''}</div>`).join('')
+      : liEmpty('Nenhuma alergia registrada');
+
+    // Medicamentos (nome + dose·freq + finalidade)
+    const meds = (medicamentos && medicamentos.length)
+      ? medicamentos.map(m=>`<div class="li col"><span class="v">${esc(m.nome)}</span>${(m.dosagem||m.frequencia)?`<span class="sub">${[m.dosagem,m.frequencia].filter(Boolean).map(esc).join(' · ')}</span>`:''}${m.motivo?`<span class="sub">Finalidade: ${esc(m.motivo)}</span>`:''}</div>`).join('')
+      : liEmpty('Nenhum medicamento em uso');
+
+    // Condições + implantes
+    const cond = String(p.condicoes||'').split(/[,;]/).map(s=>s.trim()).filter(Boolean);
+    let cnd = cond.map(c=>`<div class="li"><span class="v">${esc(c)}</span></div>`).join('');
+    if (p.implantes) cnd += `<div class="li"><span class="k">Implantes</span><span class="v">${esc(p.implantes)}</span></div>`;
+    if (!cnd) cnd = liEmpty('Nenhuma condição registrada');
+
+    // Contato / Responsáveis (menor)
+    let contatoLabel, contato;
+    if (menor){
+      contatoLabel = 'Responsáveis';
+      const c=[];
+      if (p.nomePai||p.telPai) c.push(contatoLi(p.nomePai, 'Pai', p.telPai));
+      if (p.nomeMae||p.telMae) c.push(contatoLi(p.nomeMae, 'Mãe', p.telMae));
+      if (!c.length && (p.contatoEmergenciaNome||p.contatoEmergenciaTel)) c.push(contatoLi(p.contatoEmergenciaNome, p.parentescoEmergencia, p.contatoEmergenciaTel));
+      contato = c.length ? c.join('') : liEmpty('Nenhum responsável registrado');
+    } else {
+      contatoLabel = 'Contato de emergência';
+      const c=[];
+      if (p.contatoEmergenciaNome||p.contatoEmergenciaTel) c.push(contatoLi(p.contatoEmergenciaNome, p.parentescoEmergencia, p.contatoEmergenciaTel));
+      if (p.contatoEmergenciaNome2||p.contatoEmergenciaTel2) c.push(contatoLi(p.contatoEmergenciaNome2, p.parentescoEmergencia2, p.contatoEmergenciaTel2, '2º contato'));
+      contato = c.length ? c.join('') : liEmpty('Nenhum contato registrado');
+    }
+
+    const foto = usuario.fotoUrl;
+    document.getElementById('mainContent').innerHTML = `
+      <div class="pub-wrap">
+        <div class="pub-top">
+          <div class="pub-eyebrow">vita id · rg da saúde</div>
+          <div class="pub-foto">${foto?`<img src="${esc(foto)}" alt="">`:`<div class="pub-foto-ini">${getInitials(nome)}</div>`}</div>
+          <div class="pub-nome">${esc(nome)}</div>
+          <div class="pub-verif">${sIcon(ICON.check)} Verificado</div>
+        </div>
+        <div class="ficha">
+          ${grp(ICON.pessoa, 'Dados pessoais', dados)}
+          ${grp(ICON.alerta, 'Alergias', alg)}
+          ${grp(ICON.capsula, 'Medicamentos em uso', meds)}
+          ${grp(ICON.ecg, 'Condições de saúde', cnd)}
+          ${grp(ICON.fone, contatoLabel, contato)}
+        </div>
+        <div class="footer-micro">vita·id · documento·de·saúde · ${new Date().getFullYear()}</div>
+        <div class="footer-note">Dados compartilhados via vita id — RG da Saúde Digital</div>
+      </div>`;
+  }
+
+  function showError(msg){
+    document.getElementById('mainContent').innerHTML = `<div class="center-state"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${esc(msg)}</div>`;
+  }
+
+  // ?demo=1 — preview sem servidor (adulto com todos os campos novos)
+  function _demoData(){
+    return {
+      usuario: { id:'demo', nome:'Ana Borelli Souza', email:'ana@email.com', celular:'(19) 99999-1234', fotoUrl:'https://randomuser.me/api/portraits/women/44.jpg' },
+      perfil: {
+        dataNascimento:'1990-03-15', cpf:'123.***.***-00', tipoSanguineo:'O_POS',
+        planoSaude:'Unimed', carteirinhaPlano:'123456789', condicoes:'Hipertensão', implantes:'Marca-passo',
+        contatoEmergenciaNome:'João Borelli', parentescoEmergencia:'Cônjuge', contatoEmergenciaTel:'(19) 98888-4321',
+        contatoEmergenciaNome2:'Marcos Souza', parentescoEmergencia2:'Irmão', contatoEmergenciaTel2:'(19) 97777-5555'
+      },
+      alergias: [ { nome:'Dipirona', reacao:'anafilaxia' }, { nome:'Camarão', reacao:'inchaço' } ],
+      medicamentos: [ { nome:'Losartana', dosagem:'50mg', frequencia:'1x ao dia', motivo:'pressão alta' } ]
+    };
+  }
+
+  async function load(){
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('demo') === '1'){ render(_demoData()); return; }
+    const userId = params.get('id');
+    if (!userId){ showError('Link inválido — ID não encontrado.'); return; }
+    try {
+      const res = await fetch(`${API_URL}/autorizacao/rg-publico/${userId}`);
+      if (!res.ok) throw new Error('Não foi possível carregar os dados deste RG.');
+      render(await res.json());
+    } catch (e){ showError(e.message || 'Erro ao carregar os dados.'); }
+  }
+  load();
+</script>
+</body>
+</html>

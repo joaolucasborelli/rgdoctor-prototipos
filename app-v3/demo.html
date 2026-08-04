@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>App RG Saúde — demonstração</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0D0F14;--body:#4B5563;--mut:#6B7280;--lgt:#9CA3AF;
+        --blue:#2563EB;--bbg:#EFF4FF;--hair:#E6E9EF;--soft:#F4F6FA}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--soft);font-family:'Plus Jakarta Sans',-apple-system,sans-serif;
+       color:var(--ink);padding:56px 24px 90px}
+  .wrap{max-width:1120px;margin:0 auto}
+  .kick{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--blue);text-transform:uppercase}
+  h1{font-size:38px;font-weight:900;letter-spacing:-.8px;margin:12px 0 14px}
+  h1 em{font-style:italic;color:var(--blue);padding-right:.08em}
+  .lede{font-size:16px;color:var(--body);line-height:1.6;max-width:680px}
+  .aviso{margin-top:22px;background:#fff;border:1px solid var(--hair);border-left:3px solid var(--blue);
+         border-radius:14px;padding:16px 20px;font-size:14px;color:var(--body);line-height:1.6;max-width:760px}
+  .aviso b{color:var(--ink)}
+  .cta{display:inline-flex;align-items:center;gap:10px;margin-top:26px;background:var(--blue);color:#fff;
+       text-decoration:none;font-size:15px;font-weight:700;padding:15px 26px;border-radius:14px;
+       box-shadow:0 4px 18px rgba(37,99,235,.24)}
+  .cta:hover{background:#1D4FD8}
+  .off{display:inline-block;margin-top:26px;margin-left:14px;font-size:13px;color:var(--mut);text-decoration:none}
+  .off:hover{color:var(--ink)}
+  h2{font-size:11px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--lgt);
+     margin:44px 0 4px;padding-bottom:10px;border-bottom:1px solid var(--hair)}
+  h2 span{float:right;letter-spacing:0;text-transform:none;font-weight:500;font-size:11px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:18px}
+  a.card{display:block;background:#fff;border:1px solid var(--hair);border-radius:14px;padding:15px 16px;
+         text-decoration:none;transition:.14s}
+  a.card:hover{border-color:var(--blue);box-shadow:0 3px 14px rgba(37,99,235,.10);transform:translateY(-1px)}
+  .n{font-size:10px;font-weight:800;color:var(--blue);letter-spacing:.08em}
+  .t{font-size:14.5px;font-weight:700;color:var(--ink);margin-top:5px}
+  .d{font-size:12px;color:var(--mut);margin-top:4px;line-height:1.45}
+  .tag{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+       padding:2px 7px;border-radius:20px;margin-top:8px}
+  .tag.dentro{background:var(--bbg);color:var(--blue)}
+  .tag.orfa{background:#F3F4F6;color:var(--lgt)}
+  footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--hair);font-size:12.5px;
+         color:var(--mut);line-height:1.7;max-width:760px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kick">App RG Saúde · paciente</div>
+  <h1>Todas as telas, <em>navegáveis</em></h1>
+  <p class="lede">Sem cadastro, sem login, sem servidor. A paciente é a <b>Ana Costa</b>, 45 anos —
+     com três alergias, quatro medicamentos, três exames com biomarcadores, dois médicos e um retorno pendente.</p>
+
+  <div class="aviso">
+    <b>É o app de verdade</b> — o mesmo código, as mesmas telas, os mesmos fluxos.
+    Só o backend foi trocado por dados simulados. O que você editar aqui vale pro app real.<br><br>
+    A barra de abas já é a nova: <b>Meu RG · Documentos · Concierge · Busca · QR Code</b>.
+    A aba Consultas saiu — as telas dela continuam existindo e estão listadas aqui embaixo.
+  </div>
+
+  <a class="cta" href="01-saude.html?demo=1">Entrar no app →</a>
+  <a class="off" href="01-saude.html?demo=0">desligar a demonstração</a>
+
+  <h2>Meu RG <span>a home e o que sai dela</span></h2>
+  <div class="grid" id="g1"></div>
+
+  <h2>Exames <span>lista, exame aberto, biomarcador e melhorias</span></h2>
+  <div class="grid" id="g2"></div>
+
+  <h2>Concierge <span>a conversa — a inteligência responde de verdade</span></h2>
+  <div class="grid" id="g7"></div>
+
+  <h2>Busca <span>médicos e clínicas do ecossistema</span></h2>
+  <div class="grid" id="g8"></div>
+
+  <h2>Consultas e médico <span>a aba saiu, as telas continuam</span></h2>
+  <div class="grid" id="g3"></div>
+
+  <h2>QR Code e RG público</h2>
+  <div class="grid" id="g4"></div>
+
+  <h2>Entrada e cadastro <span>o fluxo de quem chega</span></h2>
+  <div class="grid" id="g5"></div>
+
+  <h2>Perfil, estados e o resto</h2>
+  <div class="grid" id="g6"></div>
+
+  <footer>
+    <b>O detalhe do exame não é um arquivo.</b> Ele mora dentro de <code>09-exames-lista.html</code>,
+    que tem seis telas empilhadas por dentro: a lista, o exame aberto, a lista de biomarcadores,
+    o biomarcador, as melhorias e o agrupamento por sistema. Para chegar no biomarcador:
+    abra um exame → clique numa das caixas <b>bom · médio · ruim</b> → escolha um marcador.<br><br>
+    Para desligar a demonstração em qualquer tela, acrescente <code>?demo=0</code> no endereço.
+  </footer>
+</div>
+
+<script>
+const G = {
+ g1:[["01","Meu RG — home","carteirinha, medicamentos de hoje, alergias","01-saude.html"],
+     ["03","Medicamentos","a lista da semana","03-medicamentos.html"],
+     ["04","Medicamento — detalhe","dose, horário, prescritor, estoque","04-med-detalhe.html?id=md-1"],
+     ["05","Adicionar medicamento","com horários múltiplos","05-add-medicamento.html"],
+     ["06","Alergias","por categoria e gravidade","06-alergias.html"],
+     ["07","Alergia — detalhe","reação e cuidados","07-alergia-detalhe.html?id=al-1"],
+     ["08","Adicionar alergia","manual ou por scan","08-add-alergia.html"]],
+ g2:[["09","Exames — a lista","e por dentro: exame, biomarcador, melhorias","09-exames-lista.html"],
+     ["43","Exames — vazio","o estado de quem nunca anexou","43-exames-vazia.html"],
+     ["10","Exame — versão pública","o que quem escaneia o QR vê","10-exame-detalhe.html?user=demo-ana-costa&exam=ex-1"]],
+ g7:[["13","Concierge","a conversa, com anexo, áudio e resposta de verdade","13-concierge.html"]],
+ g8:[["11","Busca","filtro dentro do campo, por plano e distância","11-busca.html"],
+     ["11b","Consultório — a página","foto, equipe, planos, galeria e avaliações","11b-consultorio.html?id=digimax"]],
+ g3:[["15","Consultas","agrupadas por médico","15-consultas.html"],
+     ["17","Próxima consulta","data, local, recado do médico, Waze","17-proxima-consulta.html?id=ag-1"],
+     ["18","Perfil do médico","documentos e histórico","18-medico-perfil.html?medicoId=me-1"],
+     ["19","Histórico do médico","todas as consultas","19-medico-historico.html?medicoId=me-1"],
+     ["16","Consulta — detalhe","o que ficou daquela consulta","16-consulta-detalhe.html?id=ag-2"],
+     ["44","Consultas — vazio","antes do primeiro médico","44-consultas-vazia.html"],
+     ["--","Pré-consulta","o formulário que o médico manda","pre-consulta.html?t=demo-token-pre-consulta"]],
+ g4:[["12","QR Code","o código que abre o RG","12-qr-code.html"],
+     ["14","RG público","o que o médico vê ao escanear","14-rg-publico.html?id=demo-ana-costa"]],
+ g5:[["20","Splash","decide sozinho pra onde ir","20-splash.html"],
+     ["21","Boas-vindas","os slides de quem chega","21-boas-vindas.html"],
+     ["26","Cadastro e login","as duas coisas na mesma tela","26-cadastro.html"],
+     ["27","Consentimento","os termos, com rolagem até o fim","27-consentimento.html"],
+     ["28","Onboarding","antes do quiz","28-onboarding.html"],
+     ["30","Quiz","os 8 slides que montam o RG","30-quiz.html"],
+     ["31","Pronto","a celebração","31-pronto.html"],
+     ["24","Esqueci a senha","","24-esqueci-senha.html"],
+     ["25","Nova senha","","25-nova-senha.html"],
+     ["27","Código por SMS","órfã hoje","27-sms.html"]],
+ g6:[["18","Meu perfil","edição por bottom-sheet","18-perfil.html"],
+     ["71","Privacidade","quem pode ver seus dados","71-privacidade.html"],
+     ["40","Meu RG — vazio","","40-saude-vazia.html"],
+     ["41","Medicamentos — vazio","","41-medicamentos-vazia.html"],
+     ["42","Alergias — vazio","","42-alergias-vazia.html"],
+     ["52","Carregando","o esqueleto da home","52-loading-home.html"],
+     ["60","Sem conexão","","60-erro-offline.html"],
+     ["--","Convite de empresa","","convite.html?c=demo"],
+     ["--","Painel da empresa","","empresa-painel.html"]]
+};
+const ORFAS = ['10-exame','27-sms','71-privacidade','40-saude','41-medicamentos','42-alergias','52-loading','60-erro'];
+Object.keys(G).forEach(k=>{
+  document.getElementById(k).innerHTML = G[k].map(([n,t,d,h])=>{
+    const orfa = ORFAS.some(o=>h.startsWith(o));
+    const sep = h.includes('?') ? '&' : '?';
+    return `<a class="card" href="${h}${sep}demo=1">
+      <div class="n">${n}</div><div class="t">${t}</div>
+      ${d?`<div class="d">${d}</div>`:''}
+      <span class="tag ${orfa?'orfa':'dentro'}">${orfa?'sem link no app':'no fluxo'}</span></a>`;
+  }).join('');
+});
+try{ localStorage.setItem('vitae_demo','1'); localStorage.setItem('vitae_token','demo-token'); }catch(_){}
+</script>
+</body>
+</html>

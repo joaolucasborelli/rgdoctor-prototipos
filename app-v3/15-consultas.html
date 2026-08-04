@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vita id — Consultas</title>
+<script src="api.js"></script>
+<link rel="stylesheet" href="_core.css">
+<style>
+  /* Fundo da tela definido pelo _core.css (.phone herda var(--bg)) */
+
+  .ph { padding: 22px var(--s5) 6px; position: relative; }
+  .ph-greet { font-size: 12.5px; color: var(--ink3); font-weight: 500; margin-bottom: 3px; }
+  .ph-title { font-size: 26px; font-weight: 900; color: var(--ink); letter-spacing: -0.7px; line-height: 1.05; }
+  .ph-title em { font-style: italic; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 0.08em; }
+  .ph-subtitle { font-size: 13px; color: var(--ink3); margin-top: 6px; font-weight: 500; }
+  .ph-help {
+    position: absolute; top: 22px; right: var(--s5);
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #0D0F14; border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 2px 8px rgba(13,15,20,0.20);
+    color: #fff; z-index: 5; transition: all 0.15s;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 800;
+  }
+  .ph-help::after { content: '?'; line-height: 1; }
+  .ph-help:hover { background: #1a1d24; }
+  .ph-help:active { transform: scale(0.92); }
+  .ph-help svg { display: none; }
+
+  .search-block { padding: 16px var(--s5) 4px; }
+  .search { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 14px; box-shadow: 0 1px 8px rgba(0,0,0,0.03); transition: all 0.2s var(--ease); }
+  .search:focus-within { border-color: rgba(37,99,235,0.35); box-shadow: 0 0 0 4px rgba(37,99,235,0.08); }
+  .search svg.search-ico { width: 17px; height: 17px; stroke: var(--ink4); fill: none; stroke-width: 2; flex-shrink: 0; }
+  .search input { flex: 1; border: none; outline: none; background: transparent; font-family: inherit; font-size: 14.5px; font-weight: 500; color: var(--ink); }
+  .search input::placeholder { color: var(--ink4); }
+  .search .clear { width: 18px; height: 18px; border-radius: 50%; background: rgba(0,0,0,0.06); display: none; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+  .search .clear svg { width: 10px; height: 10px; stroke: var(--ink3); stroke-width: 2.4; fill: none; }
+  .search.has-value .clear { display: flex; }
+
+  .urgent-block { padding: 18px var(--s5) 0; }
+
+  .preconsulta-card { background: #fff; border: 1px solid rgba(245,158,11,0.20); border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: flex; gap: 12px; align-items: center; box-shadow: 0 1px 12px rgba(245,158,11,0.10); position: relative; overflow: hidden; cursor: pointer; }
+  .preconsulta-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #F59E0B, rgba(245,158,11,0.3), transparent); }
+  .pre-ic { width: 42px; height: 42px; border-radius: 12px; background: rgba(245,158,11,0.10); color: #F59E0B; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .pre-ic svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+  .pre-body { flex: 1; min-width: 0; }
+  .pre-title { font-size: 13.5px; font-weight: 800; color: var(--ink); margin-bottom: 2px; letter-spacing: -0.1px; }
+  .pre-sub { font-size: 12px; color: var(--ink3); line-height: 1.45; }
+  .pre-chev { color: #F59E0B; flex-shrink: 0; }
+  .pre-chev svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; }
+
+  .hero-next { background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 18px; overflow: hidden; margin-bottom: 12px; box-shadow: 0 4px 24px rgba(37,99,235,0.08); cursor: pointer; position: relative; transition: transform 0.15s var(--ease); }
+  .hero-next:active { transform: scale(0.99); }
+  .hero-next::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--green), var(--cyan), transparent); z-index: 3; }
+  .hero-top { padding: 18px 18px 14px; background: linear-gradient(180deg, rgba(37,99,235,0.05), transparent); }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 100px; background: rgba(37,99,235,0.10); color: #00764A; font-size: 10.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; }
+  .hero-eyebrow .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--green2); box-shadow: 0 0 0 3px rgba(37,99,235,0.18); animation: pulse 2s infinite; }
+  .hero-row { display: flex; align-items: center; gap: 14px; }
+  .hero-av { width: 52px; height: 52px; border-radius: 50%; background: var(--grad); color: #0D0F14; font-size: 17px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: -0.3px; box-shadow: 0 6px 18px rgba(37,99,235,0.30); }
+  .hero-meta { flex: 1; min-width: 0; }
+  .hero-doc { font-size: 16px; font-weight: 800; color: var(--ink); letter-spacing: -0.3px; line-height: 1.15; margin-bottom: 3px; }
+  .hero-spec { font-size: 12px; color: var(--ink3); font-weight: 500; }
+  .hero-when { margin-top: 16px; display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(37,99,235,0.06); border-radius: 12px; }
+  .hero-when-left { font-size: 14px; font-weight: 800; color: var(--ink); letter-spacing: -0.2px; }
+  .hero-when-left span { font-weight: 600; color: var(--ink3); }
+  .hero-when-right { font-size: 10.5px; font-weight: 800; color: var(--green2); letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .ret-pending { background: #fff; border: 1px solid rgba(245,158,11,0.18); border-left: 4px solid var(--warn); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 1px 12px rgba(245,158,11,0.06); cursor: pointer; }
+  .ret-pending-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 0.10em; text-transform: uppercase; color: var(--warn); margin-bottom: 6px; }
+  .ret-pending-title { font-size: 14.5px; font-weight: 800; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.1px; }
+  .ret-pending-date { font-size: 22px; font-weight: 900; color: var(--ink); letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 4px; }
+  .ret-pending-hour { font-size: 14px; font-weight: 700; color: var(--ink2); margin-bottom: 4px; }
+  .ret-pending-sub { font-size: 12px; color: var(--ink3); margin-bottom: 14px; line-height: 1.4; }
+  .ret-actions-row { display: flex; gap: 8px; }
+  .ret-btn { flex: 1; padding: 10px 12px; border-radius: 12px; font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; border: none; transition: all 0.15s; }
+  .ret-btn.p { background: var(--grad); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.24); }
+  .ret-btn.s { background: #fff; color: var(--ink2); border: 1px solid rgba(0,0,0,0.08); }
+  .ret-btn:active { transform: scale(0.97); }
+
+  .doctors-block { padding: 18px 0 100px; }
+  .section-lbl { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink3); margin: 0 var(--s5) 12px; display: flex; align-items: center; justify-content: space-between; }
+  .section-lbl-count { color: var(--ink4); font-weight: 600; letter-spacing: 0.02em; text-transform: none; font-size: 11.5px; }
+
+  .doctor-row { margin: 0 var(--s5) 10px; padding: 14px 16px; background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 1px 12px rgba(0,0,0,0.04); position: relative; transition: all 0.18s var(--ease); }
+  .doctor-row:hover { border-color: rgba(37,99,235,0.20); box-shadow: 0 4px 18px rgba(37,99,235,0.08); }
+  .doctor-row:active { transform: scale(0.99); }
+  .doctor-row.has-pending { border-color: rgba(245,158,11,0.20); background: linear-gradient(135deg, #fff 0%, rgba(245,158,11,0.02) 100%); }
+  .doc-av { width: 48px; height: 48px; border-radius: 50%; background: var(--grad); color: #0D0F14; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: -0.3px; position: relative; }
+  .doc-av.muted { background: linear-gradient(120deg, #9CA3AF, #C4C9D4); color: #1F2937; }
+  .doc-av-badge { position: absolute; top: -3px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 100px; background: var(--bad); color: #fff; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }
+  .doc-info { flex: 1; min-width: 0; }
+  .doc-name { font-size: 15px; font-weight: 800; color: var(--ink); letter-spacing: -0.2px; line-height: 1.2; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .doc-spec { font-size: 12px; color: var(--ink3); font-weight: 500; margin-bottom: 6px; }
+  .doc-meta-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .doc-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 100px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; }
+  .doc-pill.ok { background: rgba(37,99,235,0.10); color: #00764A; }
+  .doc-pill.ok .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green2); }
+  .doc-pill.warn { background: rgba(245,158,11,0.10); color: var(--warn); }
+  .doc-pill.warn .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--warn); animation: pulse 2s infinite; }
+  .doc-pill.info { background: rgba(59,130,246,0.08); color: #1E40AF; }
+  .doc-pill.muted { background: rgba(0,0,0,0.04); color: var(--ink3); }
+  .doc-chev { color: var(--ink5); flex-shrink: 0; }
+  .doc-chev svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  .skel-row { margin: 0 var(--s5) 10px; padding: 14px 16px; background: #fff; border: 1px solid rgba(0,0,0,0.05); border-radius: 16px; display: flex; align-items: center; gap: 14px; }
+  .skel-av { width: 48px; height: 48px; border-radius: 50%; background: rgba(0,0,0,0.06); }
+  .skel-lines { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .skel-line { height: 12px; background: rgba(0,0,0,0.06); border-radius: 6px; }
+  .skel-line.short { width: 60%; } .skel-line.med { width: 40%; }
+  @keyframes shimmer-skel { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+  .skel-av, .skel-line { animation: shimmer-skel 1.5s ease infinite; }
+
+  /* ONBOARDING */
+  .onb { position: absolute; inset: 0; background: #F4F6FA; z-index: 120; display: flex; flex-direction: column; opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.3s var(--ease), visibility 0s linear 0.3s; }
+  .onb.on { opacity: 1; pointer-events: all; visibility: visible; transition: opacity 0.3s var(--ease), visibility 0s linear 0s; }
+  .onb-skip { position: absolute; top: 50px; right: var(--s5); z-index: 5; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--ink3); background: none; border: none; cursor: pointer; padding: 8px 4px; }
+  .onb-slides { flex: 1; overflow: hidden; position: relative; margin-top: 40px; min-height: 0; }
+  .onb-slide { position: absolute; inset: 0; padding: 16px 16px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; opacity: 0; transform: translateX(40px); transition: opacity 0.35s var(--ease), transform 0.35s var(--ease); pointer-events: none; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .onb-slide::-webkit-scrollbar { display: none; }
+  .onb-slide.active { opacity: 1; transform: translateX(0); pointer-events: all; }
+  .onb-slide.prev { opacity: 0; transform: translateX(-40px); }
+  .onb-illus { width: 150px; height: 150px; margin: 0 0 24px; position: relative; flex-shrink: 0; }
+  .onb-illus::before { content: ''; position: absolute; inset: 20px; background: var(--grad); border-radius: 50%; filter: blur(50px); opacity: 0.20; }
+  .onb-illus svg { width: 100%; height: 100%; position: relative; z-index: 2; }
+  .onb-title { font-size: 21px; font-weight: 900; color: var(--ink); letter-spacing: -0.4px; line-height: 1.22; margin-bottom: 12px; padding: 0 16px; max-width: none; width: 100%; flex-shrink: 0; word-wrap: break-word; }
+  .onb-title em { font-style: italic; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 0.08em; }
+  .onb-desc { font-size: 13.5px; color: var(--ink3); line-height: 1.55; max-width: none; width: 100%; padding: 0 22px; margin-bottom: 16px; flex-shrink: 0; }
+  .onb-desc strong { color: var(--ink2); font-weight: 700; }
+  .onb-dots { display: flex; gap: 8px; justify-content: center; align-items: center; padding: 8px 0 12px; flex-shrink: 0; }
+  .onb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink5); transition: all 0.25s var(--ease); }
+  .onb-dot.active { width: 28px; border-radius: 100px; background: var(--grad); }
+  .onb-footer { padding: 8px var(--s5) 24px; background: #F4F6FA; flex-shrink: 0; }
+  .onb-cta { width: 100%; padding: 16px; background: var(--grad); border: none; border-radius: 16px; font-family: inherit; font-size: 15px; font-weight: 800; color: #fff; cursor: pointer; box-shadow: 0 8px 24px rgba(37,99,235,0.30); letter-spacing: -0.1px; transition: transform 0.15s; }
+  .onb-cta:active { transform: scale(0.98); }
+  .onb-back { width: 100%; padding: 12px; background: transparent; border: none; color: var(--ink3); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+  .onb-back:hover { color: var(--ink); }
+  .hide { display: none !important; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span class="right"><svg width="24" height="11" viewBox="0 0 24 11" fill="none"><rect x="1" y="1" width="20" height="9" rx="2" stroke="currentColor" stroke-opacity=".35"/><rect x="2.5" y="2.5" width="17" height="6" rx="1" fill="currentColor"/></svg></span></div>
+
+  <div class="content" style="top: 50px; background: #F4F6FA;">
+    <div class="ph anim anim-d1">
+      <div class="ph-title">Suas <em>consultas</em></div>
+      <div class="ph-subtitle">Seus médicos, sempre na sua mão</div>
+      <button class="ph-help" onclick="openOnboarding(true)" aria-label="Ajuda">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+    </div>
+
+    <div class="search-block anim anim-d2" id="searchBlock">
+      <div class="search" id="searchBox">
+        <svg class="search-ico" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.5" y2="16.5"/></svg>
+        <input type="text" id="searchInp" placeholder="Buscar médico..." oninput="onSearch(this.value)">
+        <div class="clear" onclick="clearSearch()"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg></div>
+      </div>
+    </div>
+
+    <div class="urgent-block" id="urgentBlock"></div>
+
+    <div class="doctors-block" id="doctorsBlock">
+      <div class="skel-row"><div class="skel-av"></div><div class="skel-lines"><div class="skel-line short"></div><div class="skel-line med"></div></div></div>
+      <div class="skel-row"><div class="skel-av"></div><div class="skel-lines"><div class="skel-line short"></div><div class="skel-line med"></div></div></div>
+    </div>
+  </div>
+
+  <div class="onb" id="onb">
+    <button class="onb-skip" onclick="closeOnboarding()">Pular</button>
+    <div class="onb-slides">
+      <div class="onb-slide active" data-slide="1">
+        <div class="onb-illus">
+          <svg viewBox="0 0 200 200" fill="none">
+            <defs>
+              <linearGradient id="ill1a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#3B82F6"/></linearGradient>
+              <linearGradient id="ill1b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB" stop-opacity="0.12"/><stop offset="100%" stop-color="#3B82F6" stop-opacity="0.12"/></linearGradient>
+            </defs>
+            <rect x="40" y="58" width="120" height="40" rx="10" fill="url(#ill1b)" stroke="url(#ill1a)" stroke-width="1.5" opacity="0.6" transform="rotate(-6 100 78)"/>
+            <rect x="40" y="78" width="120" height="40" rx="10" fill="#fff" stroke="url(#ill1a)" stroke-width="1.5" opacity="0.85" transform="rotate(-2 100 98)"/>
+            <g>
+              <rect x="38" y="98" width="124" height="50" rx="12" fill="#fff" stroke="url(#ill1a)" stroke-width="2"/>
+              <circle cx="60" cy="123" r="14" fill="url(#ill1a)"/>
+              <text x="60" y="128" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="11" font-weight="800" fill="#0D0F14">LB</text>
+              <rect x="82" y="113" width="70" height="6" rx="3" fill="#0D0F14" opacity="0.85"/>
+              <rect x="82" y="125" width="50" height="5" rx="2.5" fill="#9CA3AF"/>
+              <rect x="82" y="135" width="34" height="5" rx="2.5" fill="#2563EB" opacity="0.5"/>
+              <circle cx="68" cy="111" r="6" fill="#EF4444"/>
+              <text x="68" y="114" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="8" font-weight="800" fill="#fff">2</text>
+            </g>
+          </svg>
+        </div>
+        <div class="onb-title">Cada médico no <em>seu lugar</em></div>
+        <div class="onb-desc">Suas consultas, documentos e recados ficam organizados por médico. <strong>Receita perdida no WhatsApp</strong> nunca mais.</div>
+      </div>
+      <div class="onb-slide" data-slide="2">
+        <div class="onb-illus">
+          <svg viewBox="0 0 200 200" fill="none">
+            <defs><linearGradient id="ill2a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#3B82F6"/></linearGradient></defs>
+            <path d="M40 50 Q40 38 52 38 L140 38 Q152 38 152 50 L152 78 Q152 90 140 90 L70 90 L52 104 L56 90 Q40 90 40 78 Z" fill="url(#ill2a)" opacity="0.16"/>
+            <path d="M40 50 Q40 38 52 38 L140 38 Q152 38 152 50 L152 78 Q152 90 140 90 L70 90 L52 104 L56 90 Q40 90 40 78 Z" fill="none" stroke="url(#ill2a)" stroke-width="2"/>
+            <rect x="56" y="54" width="56" height="5" rx="2.5" fill="#0D0F14" opacity="0.8"/>
+            <rect x="56" y="66" width="78" height="5" rx="2.5" fill="#9CA3AF"/>
+            <rect x="56" y="78" width="44" height="5" rx="2.5" fill="#9CA3AF"/>
+            <rect x="58" y="120" width="84" height="60" rx="10" fill="#fff" stroke="url(#ill2a)" stroke-width="2"/>
+            <circle cx="100" cy="150" r="16" fill="url(#ill2a)"/>
+            <path d="M92 150 L98 156 L110 144" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="onb-title">Seu médico <em>chega preparado</em></div>
+        <div class="onb-desc">Antes da consulta, ele te envia perguntas no WhatsApp. Você responde em 2 minutos e <strong>ganha tempo de qualidade</strong> com ele na hora da visita.</div>
+      </div>
+      <div class="onb-slide" data-slide="3">
+        <div class="onb-illus">
+          <svg viewBox="0 0 200 200" fill="none">
+            <defs>
+              <linearGradient id="ill3a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#3B82F6"/></linearGradient>
+              <linearGradient id="ill3b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB" stop-opacity="0.10"/><stop offset="100%" stop-color="#3B82F6" stop-opacity="0.10"/></linearGradient>
+            </defs>
+            <rect x="34" y="40" width="132" height="118" rx="12" fill="#fff" stroke="url(#ill3a)" stroke-width="2"/>
+            <rect x="34" y="40" width="132" height="26" rx="12" fill="url(#ill3b)"/>
+            <line x1="62" y1="32" x2="62" y2="50" stroke="url(#ill3a)" stroke-width="3" stroke-linecap="round"/>
+            <line x1="138" y1="32" x2="138" y2="50" stroke="url(#ill3a)" stroke-width="3" stroke-linecap="round"/>
+            <g><circle cx="80" cy="108" r="9" fill="url(#ill3a)"/><text x="80" y="112" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="10" font-weight="800" fill="#0D0F14">1</text></g>
+            <g><circle cx="102" cy="108" r="9" fill="url(#ill3a)"/><text x="102" y="112" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="10" font-weight="800" fill="#0D0F14">2</text></g>
+            <g><circle cx="80" cy="132" r="9" fill="url(#ill3a)"/><text x="80" y="136" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="10" font-weight="800" fill="#0D0F14">3</text></g>
+            <circle cx="150" cy="38" r="14" fill="url(#ill3a)"/>
+            <path d="M143 38 L148 43 L157 33" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="onb-title">Precisou <em>remarcar?</em></div>
+        <div class="onb-desc">Diga 3 horários que funcionam pra você. <strong>Seu médico escolhe um</strong> e pronto — sem ficar trocando mensagens o dia inteiro pra encontrar um momento.</div>
+      </div>
+    </div>
+    <div class="onb-dots" id="onbDots">
+      <div class="onb-dot active"></div>
+      <div class="onb-dot"></div>
+      <div class="onb-dot"></div>
+    </div>
+    <div class="onb-footer">
+      <button class="onb-cta" id="onbCta" onclick="nextSlide()">Próximo</button>
+      <button class="onb-back hide" id="onbBack" onclick="prevSlide()">Voltar</button>
+    </div>
+  </div>
+
+  <!-- Tab bar unificada (Consultas ativo) -->
+  <div class="tab-bar">
+    <div class="tab" onclick="window.location.href='01-saude.html'">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="9"/></svg>
+      <span class="tab-label">Meu RG</span>
+    </div>
+    <div class="tab" onclick="window.location.href='09-exames-lista.html'">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span class="tab-label">Exames</span>
+    </div>
+    <div class="tab" onclick="window.location.href='12-qr-code.html'">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="14" y1="21" x2="21" y2="21"/></svg>
+      <span class="tab-label">QR Code</span>
+    </div>
+    <div class="tab active">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="tab-label">Consultas</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function escapeHtml(s){if(s==null)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const DIAS = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+function fmtDataCurta(iso){ const d = new Date(iso); if (isNaN(d.getTime())) return '—'; return `${d.getDate()} de ${MESES[d.getMonth()]}`; }
+function fmtHora(iso){ const d = new Date(iso); if (isNaN(d.getTime())) return ''; const hh = String(d.getHours()).padStart(2,'0'); const mm = String(d.getMinutes()).padStart(2,'0'); return mm === '00' ? `${hh}h` : `${hh}h${mm}`; }
+function diaSemana(iso){ const d = new Date(iso); if (isNaN(d.getTime())) return ''; return DIAS[d.getDay()]; }
+function diasAte(iso){
+  const d = new Date(iso); const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const diff = Math.round((d - hoje) / (1000*60*60*24));
+  if (diff < 0) return 'PASSOU'; if (diff === 0) return 'HOJE'; if (diff === 1) return 'AMANHÃ';
+  if (diff < 7) return `EM ${diff} DIAS`;
+  if (diff < 30) return `EM ${Math.round(diff/7)} SEMANA${Math.round(diff/7)>1?'S':''}`;
+  return `EM ${Math.round(diff/30)} ${Math.round(diff/30)===1?'MÊS':'MESES'}`;
+}
+
+let _onbSlide = 1;
+const ONB_TOTAL = 3;
+const ONB_FLAG_KEY = 'vita_onb_consultas_visto';
+
+function openOnboarding(){
+  _onbSlide = 1;
+  document.querySelectorAll('.onb-slide').forEach(s => {
+    s.classList.remove('active', 'prev');
+    if (parseInt(s.dataset.slide) === 1) s.classList.add('active');
+  });
+  updateOnbUI();
+  document.getElementById('onb').classList.add('on');
+}
+function closeOnboarding(){
+  document.getElementById('onb').classList.remove('on');
+  // Decisão A do Lucas (22-mai-2026): qualquer fechamento = visto pra sempre
+  try { localStorage.setItem(ONB_FLAG_KEY, '1'); } catch(_){}
+  // Persiste no servidor (fire-and-forget)
+  try { vitaeAPI.setFlagsApp({ onboardingConsultasVisto: new Date().toISOString() }); } catch(_){}
+}
+function nextSlide(){ if (_onbSlide >= ONB_TOTAL) { closeOnboarding(); return; } goToSlide(_onbSlide + 1); }
+function prevSlide(){ if (_onbSlide <= 1) return; goToSlide(_onbSlide - 1); }
+function goToSlide(n){
+  document.querySelectorAll('.onb-slide').forEach(s => {
+    const num = parseInt(s.dataset.slide);
+    s.classList.remove('active', 'prev');
+    if (num === n) s.classList.add('active');
+    else if (num < n) s.classList.add('prev');
+  });
+  _onbSlide = n; updateOnbUI();
+}
+function updateOnbUI(){
+  document.querySelectorAll('#onbDots .onb-dot').forEach((d, i) => d.classList.toggle('active', i === _onbSlide - 1));
+  document.getElementById('onbCta').textContent = _onbSlide === ONB_TOTAL ? 'Começar' : 'Próximo';
+  document.getElementById('onbBack').classList.toggle('hide', _onbSlide === 1);
+}
+async function maybeAutoOpenOnboarding(){
+  // Veio da tela vazia clicando no "?": forca abertura ignorando flags
+  try {
+    if (new URLSearchParams(window.location.search).get('onb') === '1') {
+      openOnboarding();
+      return;
+    }
+  } catch(_) {}
+  // v6 — flag por CONTA, não por aparelho. Decisão A: qualquer fechamento = visto pra sempre.
+  // 3 fontes em ordem de confiança: flag local, presença de médico vinculado, flag servidor.
+  // 1) Flag local
+  try { if (localStorage.getItem(ONB_FLAG_KEY) === '1') return; } catch(_){}
+  // 2) Tem dado real (médico vinculado)? Já entendeu pra que serve.
+  try {
+    const r = await vitaeAPI.listarMeusMedicos();
+    const medicos = (r && r.medicos) || [];
+    if (medicos.length > 0) {
+      try { localStorage.setItem(ONB_FLAG_KEY, '1'); } catch(_){}
+      try { vitaeAPI.setFlagsApp({ onboardingConsultasVisto: new Date().toISOString() }); } catch(_){}
+      return;
+    }
+  } catch(_){}
+  // 3) Flag no servidor (outro aparelho já viu)
+  try {
+    const flags = await vitaeAPI.getFlagsApp();
+    if (flags && flags.onboardingConsultasVisto) {
+      try { localStorage.setItem(ONB_FLAG_KEY, '1'); } catch(_){}
+      return;
+    }
+  } catch(_){}
+  // Sem nenhum sinal de "já viu" — abre o onboarding
+  setTimeout(() => openOnboarding(), 400);
+}
+
+function abrirMedico(id){ window.location.href = '18-medico-perfil.html?medicoId=' + encodeURIComponent(id); }
+function abrirProximaConsulta(id){ window.location.href = '17-proxima-consulta.html?id=' + encodeURIComponent(id); }
+function abrirPreconsulta(token){ window.location.href = 'pre-consulta.html?t=' + encodeURIComponent(token); }
+
+async function confirmarRet(id){
+  try { await vitaeAPI.confirmarRetorno(id); await renderTela(); }
+  catch (e) { alert(e.message || 'Não consegui confirmar agora. Tenta de novo.'); }
+}
+
+async function renderTela(){
+  // ph-greet removido: header das 4 abas padronizado (só título + subtítulo)
+
+  const ub = document.getElementById('urgentBlock');
+  const db = document.getElementById('doctorsBlock');
+  ub.innerHTML = '';
+
+  let medicos = []; let preconsulta = null;
+  try {
+    const [r1, r2] = await Promise.allSettled([
+      vitaeAPI.listarMeusMedicos(),
+      vitaeAPI.getPreConsultaEmAndamento(),
+    ]);
+    if (r1.status === 'fulfilled') medicos = r1.value.medicos || [];
+    if (r2.status === 'fulfilled') preconsulta = r2.value.preConsulta || null;
+  } catch (e) { console.error('[15-consultas] erro:', e); }
+
+  if (!medicos.length && !preconsulta) {
+    window.location.replace('44-consultas-vazia.html');
+    return;
+  }
+
+  const proximas = medicos
+    .map(m => {
+      const futuras = (m.agendamentos || []).filter(a => a.dataHora && new Date(a.dataHora) >= new Date());
+      futuras.sort((a,b) => new Date(a.dataHora) - new Date(b.dataHora));
+      return { medico: m, proxima: futuras[0] || null };
+    })
+    .filter(x => x.proxima)
+    .sort((a,b) => new Date(a.proxima.dataHora) - new Date(b.proxima.dataHora));
+
+  const retornosAguardando = medicos
+    .filter(m => m.retornoPendente && m.retornoPendente.statusProposta === 'AGUARDANDO_PACIENTE')
+    .map(m => ({ medico: m, retorno: m.retornoPendente }));
+
+  const urgentHTML = [];
+
+  if (preconsulta) {
+    urgentHTML.push(`
+      <div class="preconsulta-card" onclick="abrirPreconsulta('${preconsulta.token}')">
+        <div class="pre-ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div>
+        <div class="pre-body">
+          <div class="pre-title">Termine sua pré-consulta</div>
+          <div class="pre-sub">${preconsulta.perguntasFeitas > 0 ? `Você parou em ${preconsulta.perguntasFeitas} de ${preconsulta.perguntasTotal} perguntas · ` : ''}${escapeHtml(preconsulta.medicoNome)}</div>
+        </div>
+        <div class="pre-chev"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+    `);
+  }
+
+  if (proximas.length) {
+    const { medico: m, proxima: ag } = proximas[0];
+    urgentHTML.push(`
+      <div class="hero-next" onclick="abrirProximaConsulta('${ag.id}')">
+        <div class="hero-top">
+          <div class="hero-eyebrow"><span class="pulse"></span>${diasAte(ag.dataHora)}</div>
+          <div class="hero-row">
+            <div class="hero-av">${m.avatarIniciais}</div>
+            <div class="hero-meta">
+              <div class="hero-doc">${escapeHtml(m.nome)}</div>
+              <div class="hero-spec">${escapeHtml(m.especialidade || '')}${ag.tipo ? ' · ' + escapeHtml(ag.tipo) : ''}</div>
+            </div>
+          </div>
+          <div class="hero-when">
+            <div class="hero-when-left">${fmtDataCurta(ag.dataHora)} <span>· ${fmtHora(ag.dataHora)}</span></div>
+            <div class="hero-when-right">${diaSemana(ag.dataHora)}</div>
+          </div>
+        </div>
+      </div>
+    `);
+  }
+
+  retornosAguardando.forEach(({ medico: m, retorno: r }) => {
+    urgentHTML.push(`
+      <div class="ret-pending" onclick="abrirProximaConsulta('${r.id}')">
+        <div class="ret-pending-eyebrow">Seu médico propôs retorno</div>
+        <div class="ret-pending-title">${escapeHtml(m.nome)}${m.especialidade ? ' · ' + escapeHtml(m.especialidade) : ''}</div>
+        <div class="ret-pending-date">${fmtDataCurta(r.dataHora)}</div>
+        <div class="ret-pending-hour">${diaSemana(r.dataHora)} · ${fmtHora(r.dataHora)}</div>
+        <div class="ret-pending-sub">Confirme essa data ou sugira 3 outros horários.</div>
+        <div class="ret-actions-row">
+          <button class="ret-btn p" onclick="event.stopPropagation(); confirmarRet('${r.id}')">Confirmar</button>
+          <button class="ret-btn s" onclick="event.stopPropagation(); abrirProximaConsulta('${r.id}')">Sugerir 3 horários</button>
+        </div>
+      </div>
+    `);
+  });
+
+  ub.innerHTML = urgentHTML.join('');
+
+  // Ordena médicos
+  medicos.sort((a, b) => {
+    const scoreA = (a.retornoPendente ? 2 : 0) + ((a.agendamentos||[]).some(x => x.dataHora && new Date(x.dataHora) >= new Date()) ? 1 : 0);
+    const scoreB = (b.retornoPendente ? 2 : 0) + ((b.agendamentos||[]).some(x => x.dataHora && new Date(x.dataHora) >= new Date()) ? 1 : 0);
+    return scoreB - scoreA;
+  });
+
+  if (!medicos.length) {
+    db.innerHTML = '<div style="padding:30px var(--s5);text-align:center;color:var(--ink3);font-size:13px">Pré-consulta pendente acima. Seus médicos aparecem aqui quando você criar conta vinculada.</div>';
+    return;
+  }
+
+  const counter = medicos.length;
+  const listHTML = [`
+    <div class="section-lbl">
+      <span>Seus médicos</span>
+      <span class="section-lbl-count">${counter} ${counter === 1 ? 'médico' : 'médicos'}</span>
+    </div>
+  `];
+
+  medicos.forEach(m => {
+    const docsNovos = (m.documentos || []).filter(d => !d.visualizadoEm).length;
+    const proxFut = (m.agendamentos || []).filter(a => a.dataHora && new Date(a.dataHora) >= new Date()).sort((a,b) => new Date(a.dataHora) - new Date(b.dataHora))[0];
+    const hasPending = !!m.retornoPendente || docsNovos > 0;
+
+    let pills = [];
+    if (proxFut) pills.push(`<span class="doc-pill ok"><span class="dot"></span>Próxima ${fmtDataCurta(proxFut.dataHora)}</span>`);
+    else pills.push(`<span class="doc-pill muted">Sem próxima</span>`);
+    if (m.retornoPendente && m.retornoPendente.statusProposta === 'AGUARDANDO_PACIENTE') pills.push(`<span class="doc-pill warn"><span class="dot"></span>Retorno aguardando</span>`);
+    if (docsNovos) pills.push(`<span class="doc-pill info">${docsNovos} doc${docsNovos>1?'s':''} novo${docsNovos>1?'s':''}</span>`);
+
+    listHTML.push(`
+      <div class="doctor-row ${hasPending ? 'has-pending' : ''}" onclick="abrirMedico('${m.id}')">
+        <div class="doc-av ${proxFut ? '' : 'muted'}">${m.avatarIniciais}${docsNovos ? `<div class="doc-av-badge">${docsNovos}</div>` : ''}</div>
+        <div class="doc-info">
+          <div class="doc-name">${escapeHtml(m.nome)}</div>
+          <div class="doc-spec">${escapeHtml(m.especialidade || '')}</div>
+          <div class="doc-meta-row">${pills.join('')}</div>
+        </div>
+        <div class="doc-chev"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+    `);
+  });
+
+  db.innerHTML = listHTML.join('');
+}
+
+function onSearch(v){
+  const box = document.getElementById('searchBox');
+  if (v) box.classList.add('has-value'); else box.classList.remove('has-value');
+  const q = v.trim().toLowerCase();
+  document.querySelectorAll('.doctor-row').forEach(r => {
+    const t = r.textContent.toLowerCase();
+    r.style.display = !q || t.includes(q) ? '' : 'none';
+  });
+}
+function clearSearch(){ const inp = document.getElementById('searchInp'); inp.value = ''; onSearch(''); inp.focus(); }
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.getElementById('onb').classList.contains('on')) closeOnboarding();
+  if (e.key === 'ArrowRight' && document.getElementById('onb').classList.contains('on')) nextSlide();
+  if (e.key === 'ArrowLeft' && document.getElementById('onb').classList.contains('on')) prevSlide();
+});
+
+if (window.vitaeAPI && !vitaeAPI.isLoggedIn()) {
+  window.location.replace('23-login.html');
+} else {
+  // Onboarding e render sao independentes — se um falhar, o outro continua
+  maybeAutoOpenOnboarding();
+  Promise.resolve().then(renderTela).catch(e => {
+    console.error('[15-consultas] renderTela falhou:', e);
+    document.getElementById('doctorsBlock').innerHTML = '<div style="padding:30px var(--s5);text-align:center;color:var(--ink3);font-size:13px">Sem conexão. Tente recarregar a página.</div>';
+  });
+}
+</script>
+</body>
+</html>
