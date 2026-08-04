@@ -100,6 +100,12 @@
   function trocaAbas() {
     var barras = document.querySelectorAll('.tab-bar');
     if (!barras.length) return;
+    // a tela de exames carrega o CSS antigo, que pinta a aba ativa de verde
+    if (!document.getElementById('demoAbaCor')) {
+      var st = document.createElement('style'); st.id = 'demoAbaCor';
+      st.textContent = '.tab-bar .tab.active,.tab-bar .tab.active *{color:#2563EB!important;stroke:#2563EB!important}';
+      document.head.appendChild(st);
+    }
     var ativa = abaAtiva();
     var html = ABAS.map(function (a) {
       var on = a.id === ativa;
