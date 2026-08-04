@@ -1,0 +1,100 @@
+/**
+ * vitaid — Light Theme
+ * Cores: Branco #FFFFFF · Verde #00E5A0 · Ciano #00B4D8 · Texto #0D0F14
+ * Carregado APOS vitae-glass.css
+ */
+
+:root {
+  --v-bg: #FFFFFF;
+  --v-bg-outer: #F4F6FA;
+  --v-gold: #00E5A0;
+  --v-gold-glow: rgba(0, 229, 160, 0.15);
+  --green: #00C47A;
+  --v-blue: #00B4D8;
+  --v-grad: linear-gradient(120deg, #00E5A0, #00B4D8);
+  --v-ink: #0D0F14;
+  --v-ink-70: rgba(13, 15, 20, 0.80);
+  --v-ink-50: rgba(13, 15, 20, 0.60);
+  --v-ink-35: rgba(13, 15, 20, 0.45);
+  --v-ink-20: rgba(13, 15, 20, 0.25);
+  --v-ink-10: rgba(13, 15, 20, 0.12);
+  --v-glass-h: rgba(255, 255, 255, 0.96);
+  --v-glass-m: rgba(255, 255, 255, 0.88);
+  --v-glass-l: rgba(255, 255, 255, 0.78);
+  --v-border: rgba(0, 0, 0, 0.07);
+  --v-border-top: rgba(255, 255, 255, 1);
+  --v-shadow-h: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --v-shadow-m: 0 4px 20px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.90);
+  --v-shadow-l: 0 2px 12px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --glass-bg: rgba(255,255,255,0.85);
+  --glass-bg-hover: rgba(255,255,255,0.95);
+  --glass-border: rgba(0,0,0,0.07);
+  --glass-border-top: rgba(0,0,0,0.10);
+  --glass-shadow: 0 2px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+  --bg: #FFFFFF;
+  --bg2: #F4F6FA;
+  --surface: rgba(0,0,0,0.02);
+  --surface-s: rgba(0,0,0,0.04);
+  --dark: #0D0F14;
+  --t1: #0D0F14;
+  --t2: rgba(13,15,20,0.80);
+  --t3: rgba(13,15,20,0.60);
+  --t4: rgba(13,15,20,0.45);
+  --green: #00E5A0;
+  --cyan: #00B4D8;
+  --ok: #00C47A;
+  --border: rgba(0,0,0,0.07);
+}
+
+/* 08-perfil.html */
+.section-title  { color: #0D0F14 !important; }
+.action-label   { color: rgba(13,15,20,0.70) !important; }
+.action-btn:hover {
+  background: rgba(0,0,0,0.03) !important;
+  border-color: rgba(0,229,160,0.22) !important;
+}
+.action-icon.gold { background: rgba(0,229,160,0.10) !important; }
+.action-icon.gold svg { stroke: #00E5A0 !important; }
+.next-exam-title  { color: #0D0F14 !important; }
+.next-exam-date   { color: rgba(13,15,20,0.35) !important; }
+.next-exam-arrow  { color: rgba(13,15,20,0.15) !important; }
+.info-label-title { color: #0D0F14 !important; }
+.info-label-sub   { color: rgba(13,15,20,0.50) !important; }
+.info-count       { color: rgba(13,15,20,0.45) !important; }
+.info-icon        { opacity: 0.85 !important; }
+.info-icon svg    { stroke: #00E5A0 !important; }
+.timeline-item    { border-bottom-color: rgba(13,15,20,0.06) !important; }
+.info-item        { border-bottom-color: rgba(13,15,20,0.06) !important; }
+
+/* 11-exames-lista.html */
+.hero-name   { color: rgba(13,15,20,0.80) !important; }
+.hero-meta   { color: rgba(0,229,160,0.70) !important; }
+.hero-max    { color: rgba(0,229,160,0.55) !important; }
+.hero-status { color: rgba(13,15,20,0.50) !important; }
+.hero-cta.primary {
+  background: linear-gradient(120deg, #00E5A0, #00B4D8) !important;
+  color: #0D0F14 !important;
+}
+.hero-cta.secondary {
+  background: rgba(0,229,160,0.06) !important;
+  color: rgba(0,229,160,0.85) !important;
+  border-color: rgba(0,229,160,0.18) !important;
+}
+.hero-score { color: #00E5A0 !important; }
+
+/* Tab bar */
+.tab-bar {
+  background: rgba(255,255,255,0.95) !important;
+  border-top: 1px solid rgba(0,0,0,0.07) !important;
+}
+.tab.active svg { stroke: #00E5A0 !important; }
+.tab.active span { color: #00E5A0 !important; }
+.tab svg { stroke: #9CA3AF !important; }
+.tab span { color: #9CA3AF !important; }
+
+/* FAB */
+.fab {
+  background: linear-gradient(120deg, #00E5A0, #00B4D8) !important;
+  box-shadow: 0 6px 24px rgba(0,229,160,0.35) !important;
+}
+.fab svg { stroke: #0D0F14 !important; }
