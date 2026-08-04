@@ -41,7 +41,7 @@
 
         /* ── Content ── */
         .content {
-            height:100%; overflow-y:auto; padding:152px 28px 104px;
+            height:100%; overflow-y:auto; padding:58px 28px 104px;
             display:flex; flex-direction:column; align-items:center;
             justify-content:flex-start;
         }
@@ -180,7 +180,7 @@
 
         /* ── Botão "?" padronizado (igual Exames/Consultas) ── */
         .ph-help {
-            position: absolute; top: 62px; right: 20px;
+            position: absolute; top: 58px; right: 20px;
             width: 32px; height: 32px; border-radius: 50%;
             background: #0D0F14; border: none;
             display: flex; align-items: center; justify-content: center;
@@ -192,10 +192,12 @@
         .ph-help:hover { background: #1a1d24; }
         .ph-help:active { transform: scale(0.92); }
 
-        /* ── Header padronizado (mesmo das 4 abas) ── */
+        /* ── Header padronizado (mesmo das 4 abas) ──
+           Fica no FLUXO, não flutuando: assim o cartão do QR nunca
+           sobe por cima do título quando a tela rola. */
         .ph-header {
-            position: absolute; top: 62px; left: 20px; right: 64px;
-            z-index: 6; font-family: 'Plus Jakarta Sans', sans-serif;
+            align-self: stretch; margin: 0 -8px 26px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
         .ph-title { font-size: 26px; font-weight: 900; color: #0D0F14; letter-spacing: -0.7px; line-height: 1.05; }
         .ph-title em { font-style: italic; background: linear-gradient(120deg, #3B82F6, #2563EB); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 0.08em; }
@@ -253,12 +255,6 @@
 <body>
 <div class="phone">
     <div class="notch"></div>
-
-    <!-- Header padronizado (mesmo das 4 abas) -->
-    <div class="ph-header">
-      <div class="ph-title">QR <em>Code</em></div>
-      <div class="ph-subtitle">Seu RG da Saúde em um código</div>
-    </div>
 
     <!-- Botão "?" padronizado (igual Exames/Consultas) -->
     <button class="ph-help" onclick="openOnboarding(true)" aria-label="Ajuda"></button>
@@ -440,6 +436,12 @@
     </div>
 
     <div class="content">
+        <!-- Header padronizado — agora dentro do fluxo -->
+        <div class="ph-header">
+          <div class="ph-title">QR <em>Code</em></div>
+          <div class="ph-subtitle">Seu RG da Saúde em um código</div>
+        </div>
+
         <!-- QR code card -->
         <div class="qr-card-wrap">
             <div id="qrcode"></div>
